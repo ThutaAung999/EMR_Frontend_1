@@ -1,5 +1,5 @@
-import React from 'react'
-import { Route, Router, Routes } from 'react-router-dom';
+/* import React from 'react'
+import { Route, Routes } from 'react-router-dom';
 import CreatePatient from '../components/CreatePatient';
 import Main from '../../../sections/Main';
 
@@ -15,3 +15,4 @@ const CreatePatientRoute:React.FC = () => {
 }
 
 export default CreatePatientRoute
+ */

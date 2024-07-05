@@ -1,7 +1,12 @@
-import React, { useState } from 'react';
 import { Modal, Button, Group } from '@mantine/core';
 
-export const ConfirmDialog = ({ open , onClose, onConfirm }) => {
+interface ConfirmDialogProps {
+  open: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+}
+
+export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({ open, onClose, onConfirm }) => {
   return (
     <Modal opened={open} onClose={onClose} title="Confirm Delete">
       <div>Are you sure you want to delete this item?</div>
@@ -12,5 +17,3 @@ export const ConfirmDialog = ({ open , onClose, onConfirm }) => {
     </Modal>
   );
 };
-
-

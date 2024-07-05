@@ -32,7 +32,7 @@ export const UpdateMedicine: React.FC<UpdateMedicineProps> = ({medicine,closeMod
       diseases: data.diseases.map((disease) => disease._id),
     };
 
-    mutation.mutate(transformedData);
+    mutation.mutate(transformedData as any);
     closeModal();
   };
 

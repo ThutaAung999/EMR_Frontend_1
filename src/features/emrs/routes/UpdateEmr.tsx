@@ -110,7 +110,7 @@ const UpdateEmr: React.FC<UpdateEmrProps> = ({ emr, closeModal }) => {
           <Controller
             name="emrImages"
             control={control}
-            render={({ field }) => (
+            render={() => (
               <div className="flex flex-row items-center">
                 <Button leftIcon={<FaPlus />} onClick={() => setModalOpen(true)}>
                   Add Item

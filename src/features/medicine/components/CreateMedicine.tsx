@@ -1,11 +1,11 @@
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useCreateMedicine } from "../api/create-medicine";
-import { IMedicine, IMedicineDTO } from "../model/IMedicine";
+import {  IMedicineDTO } from "../model/IMedicine";
 import { Button, Modal, MultiSelect, Stack, TextInput } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useGetMedicines } from "../api/get-all-medicines";
-import { IconUserPlus } from "@tabler/icons-react";
+
 import { useGetDiseases } from "../../diseases/api/get-all-diseases";
 
 
@@ -43,6 +43,7 @@ const CreateMedicine: React.FC = () => {
 
   if (error || diseaseError) return <div>Error</div>;
 
+  if(medicines) console.log(medicines);
 
   const diseaseOptions =
     diseases

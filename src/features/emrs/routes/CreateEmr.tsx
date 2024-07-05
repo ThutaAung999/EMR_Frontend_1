@@ -32,7 +32,11 @@ const CreateEmr: React.FC = () => {
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  const { data: emrs, error, isLoading } = useGetEmrs();
+  const { data: emrs , error, isLoading } = useGetEmrs();
+  
+  
+  if(emrs){console.log("emrs:",emrs)}
+
   const {
     data: diseases,
     error: diseaseError,
@@ -164,14 +168,7 @@ const CreateEmr: React.FC = () => {
           tag && tag._id && self.findIndex((t) => t?._id === tag._id) === index
       )
       .map((tag) => ({ value: tag._id, label: tag.name })) || [];
-
-  // CSS class for the dropdown container to add scrollbar
-  const dropdownStyles = {
-    dropdown: {
-      maxHeight: "80px", // Adjust as needed
-      overflowY: "auto",
-    },
-  };
+  
 
   return (
     <section className="h-full w-full">
@@ -185,8 +182,9 @@ const CreateEmr: React.FC = () => {
             <Controller
               name="emrImages"
               control={control}
-              render={({ field }) => (
+              render={() => (
                 <div className="flex flex-row items-center">
+                  
                   <Button
                     leftIcon={<FaPlus />}
                     onClick={() => setModalOpen(true)}
@@ -324,7 +322,7 @@ const CreateEmr: React.FC = () => {
             placeholder="Select tags"
             value={selectedTags}
             onChange={setSelectedTags}
-            styles={dropdownStyles}
+        /*     styles={dropdownStyles} */
           />
           <div className="flex flex-row gap-6 justify-end mt-4">
             <Button onClick={() => setModalOpen(false)}>Cancel</Button>

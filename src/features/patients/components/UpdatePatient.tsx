@@ -9,9 +9,9 @@ import {
   NumberInput,
   Modal,
 } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
+
 import { useUpdatePatient } from "../api/update-patient";
-import { IPatient, IPatientDTO } from "../model/IPatient";
+import { IPatient } from "../model/IPatient";
 import  {useGetDiseases}  from "../../../features/diseases/api/get-all-diseases";
 import {  useGetDoctors } from "../../../features/doctors/api/get-all-doctors";
 
@@ -21,6 +21,7 @@ interface UpdatePatientProps {
 }
 
 const UpdatePatient: React.FC<UpdatePatientProps> = ({ patient, closeModal }) => {
+
   const { control, handleSubmit, formState: { errors }, reset } = useForm<IPatient>({
     defaultValues: {
       ...patient,
@@ -39,13 +40,23 @@ const UpdatePatient: React.FC<UpdatePatientProps> = ({ patient, closeModal }) =>
       diseases: data.diseases.map(disease => disease._id),
       doctors: data.doctors.map(doctor => doctor._id)
     };
-    mutation.mutate(transformedData  );
+  
+  
+    
+  
+  
+    mutation.mutate(transformedData  as any );
     closeModal();
   };
 
   useEffect(() => {
     reset(patient);
   }, [patient, reset]);
+
+
+
+
+
 
   return (
     <Modal opened={true} onClose={closeModal} title="Edit Patient">

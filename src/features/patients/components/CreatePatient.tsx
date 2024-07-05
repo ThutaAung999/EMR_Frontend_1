@@ -13,7 +13,6 @@ import { useDisclosure } from "@mantine/hooks";
 import { useCreatePatient } from "../api/create-patient";
 import { IPatientDTO } from "../model/IPatient";
 import useGetPatients from "../api/get-all-patients";
-import { IconUserPlus } from "@tabler/icons-react";
 import { useGetDiseases } from "../../diseases/api/get-all-diseases";
 import { useGetDoctors } from "../../doctors/api/get-all-doctors";
 
@@ -55,10 +54,11 @@ const CreatePatient: React.FC = () => {
 
   const [opened, { open, close }] = useDisclosure(false);
 
-  const { data: patients, error, isLoading } = useGetPatients();
+  const {  error, isLoading } = useGetPatients();
   if (isLoading || diseaseIsLoading || doctorIsLoading)
     return <div>Loading...</div>;
   if (error || diseaseError || doctorError) return <div>Error</div>;
+
 
   const diseaseOptions =
     diseases

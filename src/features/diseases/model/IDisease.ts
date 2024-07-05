@@ -15,3 +15,5 @@ export type IDiseaseDTO = {
   /* patients: string[];
   medicines: string[]; */
 };
+
+

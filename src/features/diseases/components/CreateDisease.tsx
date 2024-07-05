@@ -5,8 +5,6 @@ import { useDisclosure } from "@mantine/hooks";
 import { useCreateDisease } from "../api/create-disease";
 import { IDiseaseDTO } from "../model/IDisease";
 
-import { IconUserPlus } from "@tabler/icons-react";
-
 import { GiVirus } from "react-icons/gi";
 
 export const CreateDisease: React.FC = () => {

@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
 import { IDoctor } from "../model/IDoctor";
-import { IPatient } from "../../patients/model/IPatient";
 
 // Fetch doctors
 

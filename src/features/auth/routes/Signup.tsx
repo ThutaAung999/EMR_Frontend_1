@@ -37,10 +37,12 @@ const Signup: React.FC = () => {
       setAuth({
         token: response.data.token,
         isAuthenticated: true,
+        userImage: response.data.userImage//user's photo 's image url
       });
 
       setNotification({ message: 'Signup  successful!', type: 'success' });
       navigate('/'); // Redirect to the home page upon successful signup
+      console.log("notification :",notification);
 
       // Optionally, handle successful registration (e.g., redirect or show success message)
       // Example: Redirect to login page after successful registration
@@ -60,7 +62,7 @@ const Signup: React.FC = () => {
   return (
     <Container size={420} my={40} className="w-full flex flex-grow flex-col">
       <Title align="center">Sign Up</Title>
-      <Paper withBorder shadow="md" padding="lg" mt="lg" radius="md" className="p-3">
+      <Paper withBorder shadow="md"  p="lg" mt="lg" radius="md" className="p-3">
         <form onSubmit={form.onSubmit(handleSignup)}>
           <TextInput
             label="Name"

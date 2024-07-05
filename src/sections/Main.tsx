@@ -1,5 +1,6 @@
 import React from "react";
-import { NavItem } from "../App";
+
+import { NavItem } from "../constants/nav-items";
 import Dashboard from "../components/dashboard";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -11,15 +12,12 @@ import { Route, Routes } from "react-router-dom";
 import TagList from "../features/tags/components/TagList";
 import CreatePatient from "../features/patients/components/CreatePatient";
 import CreateEmr from "../features/emrs/routes/CreateEmr";
-import CreateEmrForm from "../features/emrs/routes/CreateEmr/CreateEmrForm";
+
 import Signup from "../features/auth/routes/Signup";
 import Login from "../features/auth/routes/Login";
 import ProtectedRoute from "../features/auth/providers/ProtectRoute";
 
-const Main: React.FC<{ activeNavIndex: number; navItems: NavItem[] }> = ({
-  activeNavIndex,
-  navItems,
-}) => {
+const Main: React.FC<{ activeNavIndex: number; navItems: NavItem[] }> = () => {
   return (
     <section className="flex-grow h-screen overflow-auto flex flex-col justify-between items-center">
       <Header />

@@ -1,18 +1,19 @@
-import React , {useContext} from 'react';
+import React  from 'react';
 import { IoSearch } from "react-icons/io5";
 import { IoIosArrowDown } from "react-icons/io";
 import client from "../assets/images/client.jpg";
+import useAuth from '../features/auth/providers/useAuth';
 
 //-------------------------
 
-import { AuthContext } from '../features/auth/providers/AuthContext';
+
 
 //-------------------------
 
 
 const Header: React.FC = () => {
 
-  const { auth } = useContext(AuthContext);
+  const { auth } = useAuth();
 
 
     return (

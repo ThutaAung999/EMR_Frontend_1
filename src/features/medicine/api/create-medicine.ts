@@ -1,11 +1,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { IMedicine } from "../model/IMedicine";
-import { useNavigate } from "react-router-dom";
+
 import { IMedicineDTO } from "../model/IMedicine";
 
 export function useCreateMedicine(onSuccessCallback?: () => void) {
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
+  
 
   return useMutation({
     mutationFn: async (medicine: IMedicineDTO) => {

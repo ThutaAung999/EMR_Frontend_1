@@ -6,7 +6,6 @@ import { useCreateTag } from "../api/create-tag";
 import { ITagDTO } from "../model/ITag";
 import { AiOutlineTag } from "react-icons/ai";
 
-import { IconUserPlus } from "@tabler/icons-react";
 
 export const CreateTag: React.FC = () => {
   const {
