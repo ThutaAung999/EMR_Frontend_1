@@ -1,7 +1,11 @@
 import axios from 'axios';
 
+
+const apiUrl = import.meta.env.VITE_API_URL;
+//const apiUrl = import.meta.env.production.VITE_API_URL;
+
 const instance = axios.create({
-    baseURL: 'http://localhost:9999', // Set your backend's base URL here
+    baseURL: apiUrl, // Set your backend's base URL here
 });
 
 instance.interceptors.request.use(
@@ -18,4 +22,3 @@ instance.interceptors.request.use(
 );
 
 export default instance;
-    
