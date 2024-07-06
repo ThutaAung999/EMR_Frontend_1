@@ -3,6 +3,7 @@ import axios from 'axios';
 //const apiUrl = 'http://localhost:9999';
 const apiUrl = import.meta.env.VITE_API_URL;
 //const apiUrl = import.meta.env.production.VITE_API_URL;
+//const apiUrl ='https://emr-backend-intz.onrender.com'
 
 const instance = axios.create({
     baseURL: apiUrl, // Set your backend's base URL here
