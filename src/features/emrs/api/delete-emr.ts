@@ -7,7 +7,9 @@ export function useDeleteEmr() {
     return useMutation({
       mutationFn: async (emrId: string) => {
         const response = await fetch(
-          `http://localhost:9999/api/emrs/${emrId}`,
+          
+          //`http://localhost:9999/api/emrs/${emrId}`,
+          `http://https://emr-backend-intz.onrender.com/api/emrs/${emrId}`,
           {
             method: "DELETE",
           }

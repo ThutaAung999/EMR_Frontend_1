@@ -4,7 +4,11 @@ import { IPatient } from '../model/IPatient';
 // Function to fetch patients from the API
 export const fetchPatients = async (): Promise<IPatient[]> => {
     console.log("fetchPatients from frontent");
-    const response = await fetch('http://localhost:9999/api/patients');
+
+    
+    //const response = await fetch('http://localhost:9999/api/patients');
+    const response = await fetch('https://emr-backend-intz.onrender.com/api/patients');
+    
     if (!response.ok) {
         throw new Error('Fail to fetch patients');
     }

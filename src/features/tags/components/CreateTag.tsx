@@ -20,14 +20,25 @@ export const CreateTag: React.FC = () => {
   });
 
   const mutation = useCreateTag(() => {
+    console.log("Tag created successfully, closing modal and resetting form.");
     close();
     reset();
   });
 
   const onSubmit = (data: ITagDTO) => {
-    mutation.mutate(data);
+    console.log("Submitting form with data:", data);
+    mutation.mutate(data, {
+      onSuccess: () => {
+        console.log("Mutation success, closing modal.");
+        close();
+        reset();
+      },
+      onError: (error: any) => {
+        console.error("Mutation error:", error);
+      },
+    });
   };
-
+  
   const [opened, { open, close }] = useDisclosure(false);
 
   return (

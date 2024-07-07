@@ -13,6 +13,7 @@ import {
 } from "@mantine/core";
 import { IconCheck, IconX } from "@tabler/icons-react";
 import { AuthContext } from "../providers/AuthContext";
+import axios from "axios"; // Import Axios and AxiosError
 
 const Login: React.FC = () => {
   const { setAuth } = useContext(AuthContext)!;
@@ -40,7 +41,7 @@ const Login: React.FC = () => {
   const handleLogin = async (values: typeof form.values) => {
     try {
       const response = await instance.post("/api/users/login", values);
-
+  
       console.log("Login successful:", response.data);
       setAuth({
         token: response.data.token,
@@ -50,39 +51,44 @@ const Login: React.FC = () => {
       setNotification({ message: "Login successful!", type: "success" });
       navigate("/"); // Redirect to the home page upon successful login
     } catch (error) {
-      if (error.response) {
-        // Server responded with a status other than 200 range
-        console.error("Login error:", error.response.data);
-        setNotification({
-          message:
-            error.response.data.message ||
-            "Login failed. Please check your credentials and try again.",
-          type: "error",
-        });
-      } else if (error.request) {
-        // Request was made but no response received
-        console.error(
-          "Login error: No response received from server",
-          error.request
-        );
-        setNotification({
-          message:
-            "Login failed. No response from server. Please try again later.",
-          type: "error",
-        });
+      if (axios.isAxiosError(error)) {
+        if (error.response) {
+          console.error("Login error:", error.response.data);
+          setNotification({
+            message:
+              error.response.data.message ||
+              "Login failed. Please check your credentials and try again.",
+            type: "error",
+          });
+        } else if (error.request) {
+          console.error(
+            "Login error: No response received from server",
+            error.request
+          );
+          setNotification({
+            message:
+              "Login failed. No response from server. Please try again later.",
+            type: "error",
+          });
+        } else {
+          console.error("Login error:", error.message);
+          setNotification({
+            message:
+              "Login failed. An unexpected error occurred. Please try again later.",
+            type: "error",
+          });
+        }
       } else {
-        // Something happened in setting up the request that triggered an Error
-        console.error("Login error:", error.message);
+        console.error("Login error:", error);
         setNotification({
-          message:
-            "Login failed. An unexpected error occurred. Please try again later.",
+          message: "Login failed. An unknown error occurred. Please try again later.",
           type: "error",
         });
       }
       form.reset(); // Clear form fields on login failure
     }
   };
-
+   
   return (
     <Container
       size={420}

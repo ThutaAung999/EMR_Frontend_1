@@ -15,7 +15,10 @@ export function useCreateMedicine(onSuccessCallback?: () => void) {
         throw new Error("All fields are required and must be in the correct format.");
     }
     console.log('Payload being sent:', medicine); // Log payload
-      const response = await fetch("http://localhost:9999/api/medicines", {
+  
+    
+    //const response = await fetch("http://localhost:9999/api/medicines", {
+      const response = await fetch("https://emr-backend-intz.onrender.com/api/medicines", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

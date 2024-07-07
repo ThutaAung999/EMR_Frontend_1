@@ -12,7 +12,10 @@ export function useCreatePatient(onSuccessCallback?: () => void) {
 
             console.log('Payload being sent:', patient); // Log payload
 
-            const response = await fetch('http://localhost:9999/api/patients', {
+            
+            //const response = await fetch('http://localhost:9999/api/patients', {
+
+            const response = await fetch('https://emr-backend-intz.onrender.com/api/patients', {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json',

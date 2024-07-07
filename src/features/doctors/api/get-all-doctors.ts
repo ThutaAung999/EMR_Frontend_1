@@ -4,7 +4,9 @@ import { IDoctor } from "../model/IDoctor";
 // Fetch doctors
 
 const fetchDoctors = async (): Promise<IDoctor[]> => {
-  const response = await fetch("http://localhost:9999/api/doctors");
+
+  //const response = await fetch("http://localhost:9999/api/doctors");
+  const response = await fetch("https://emr-backend-intz.onrender.com/api/doctors");
   if (!response.ok) {
     throw new Error("Failed to fetch doctors");
   }

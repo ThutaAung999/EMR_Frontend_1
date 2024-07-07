@@ -54,7 +54,9 @@ const UpdateEmr: React.FC<UpdateEmrProps> = ({ emr, closeModal }) => {
 
     try {
       const res = await axios.post(
-        "http://localhost:9999/api/emrs/uploads",
+       
+        "https://emr-backend-intz.onrender.com/api/emrs/uploads",
+        //"http://localhost:9999/api/emrs/uploads",
         formData,
         {
           headers: {
@@ -121,7 +123,10 @@ const UpdateEmr: React.FC<UpdateEmrProps> = ({ emr, closeModal }) => {
                   {uploadedImages.map((image, index) => (
                     <div key={index} className="relative ">
                       <img
-                        src={`http://localhost:9999/${image.image}`} // Correct image path
+                      
+                      
+                      //src={`http://localhost:9999/${image.image}`} // Correct image path  
+                      src={`https://emr-backend-intz.onrender.com/${image.image}`} // Correct image path
                         alt="Uploaded"
                         className="object-cover w-32 h-32 rounded-lg shadow-md  mx-3 " 
                       />

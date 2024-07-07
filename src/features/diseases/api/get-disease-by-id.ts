@@ -3,7 +3,10 @@ import { IDisease } from '../model/IDisease';
 
 //--------------------------
 const fetchDiseaseById = async (id: string): Promise<IDisease> => {
-  const response = await fetch(`http://localhost:9999/api/diseases/${id}`);
+  
+  
+  //const response = await fetch(`http://localhost:9999/api/diseases/${id}`);
+  const response = await fetch(`https://emr-backend-intz.onrender.com/sdiseases/${id}`);
   
   if (!response.ok) {
     const errorData = await response.json();

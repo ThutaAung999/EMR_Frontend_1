@@ -11,8 +11,10 @@ export function useCreateDisease(onSuccessCallback?: () => void) {
             }
 
             console.log('Payload being sent:', disease); // Log payload
-
-            const response = await fetch('http://localhost:9999/api/diseases', {
+            
+            
+            //const response = await fetch('http://localhost:9999/api/diseases', {
+            const response = await fetch('https://emr-backend-intz.onrender.com/api/diseases', {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json',

@@ -6,7 +6,9 @@ export function useDeleteTag() {
     return useMutation({
       mutationFn: async (tagId: string) => {
         const response = await fetch(
-          `http://localhost:9999/api/tags/${tagId}`,
+          
+          //`http://localhost:9999/api/tags/${tagId}`,
+          `https://emr-backend-intz.onrender.com/api/tags/${tagId}`,
           {
             method: "DELETE",
           }

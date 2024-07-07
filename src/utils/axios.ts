@@ -7,6 +7,7 @@ const apiUrl = import.meta.env.VITE_API_URL;
 
 const instance = axios.create({
     baseURL: apiUrl, // Set your backend's base URL here
+    
 });
 
 instance.interceptors.request.use(

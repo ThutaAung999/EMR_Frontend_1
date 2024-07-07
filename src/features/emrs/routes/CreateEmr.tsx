@@ -86,7 +86,9 @@ const CreateEmr: React.FC = () => {
 
     try {
       const res = await axios.post(
-        "http://localhost:9999/api/emrs/uploads",
+
+        //"http://localhost:9999/api/emrs/uploads",
+        "https://emr-backend-intz.onrender.com/api/emrs/uploads",
         formData,
         {
           headers: {
@@ -196,7 +198,9 @@ const CreateEmr: React.FC = () => {
                     {uploadedImages.map((image, index) => (
                       <div key={index} className="relative">
                         <img
-                          src={`http://localhost:9999/${image.image}`} // Correct image path
+                        
+                        src={`https://emr-backend-intz.onrender.com/${image.image}`}
+                          //src={`http://localhost:9999/${image.image}`} // Correct image path
                           alt="Uploaded"
                           className="w-24 h-24 rounded-full"
                           style={{ margin: "10px" }}
