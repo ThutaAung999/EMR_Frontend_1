@@ -4,28 +4,24 @@ import { Button, Table, TextInput } from "@mantine/core";
 import { usePagination } from "@mantine/hooks";
 import { useDeleteMedicine } from "../api/delete-medicine";
 import { ConfirmDialog } from "../../../reusable-components/ConfirmDialog";
-import CreateMedicine from "./CreateMedicine";
 import { mapIdsToDiseases } from "../../patients/components/util";
 import { IMedicine } from "../model/IMedicine";
-
 import { IconEdit, IconSearch, IconTrash } from "@tabler/icons-react";
-import { UpdateMedicine } from "./UpdateMedicine";
+import UpdateMedicine from "./UpdateMedicine";
 import Pagination from "../../../reusable-components/Pagination";
 import { useGetDiseases } from "../../diseases/api/get-all-diseases";
+import CreateMedicine from "./CreateMedicine";
 
 export const MedicineList: React.FC = () => {
   const { data, error, isLoading } = useGetMedicines();
   const mutationDelete = useDeleteMedicine();
 
-  const {data: diseases,error: diseasesError,isLoading: diseasesLoading} = useGetDiseases();
+  const { data: diseases, error: diseasesError, isLoading: diseasesLoading } = useGetDiseases();
 
   const [confirmOpen, setConfirmOpen] = useState(false);
-
   const [selectedMedicineId, setSelectedMedicineId] = useState<string | null>(null);
-  const [ selectedMedicine, setSelectedMedicine] = useState<IMedicine | null>(null);
-
+  const [selectedMedicine, setSelectedMedicine] = useState<IMedicine | null>(null);
   const [updateModalOpen, setUpdateModalOpen] = useState(false);
-
   const [searchQuery, setSearchQuery] = useState("");
 
   const itemsPerPage = 7;
@@ -38,12 +34,7 @@ export const MedicineList: React.FC = () => {
 
   if (isLoading || diseasesLoading) return <div>Loading...</div>;
   if (error) return <div>An error occurred: {error.message}</div>;
-  if (diseasesError)
-    return (
-      <div>
-        An error occurred while fetching diseases: {diseasesError.message}
-      </div>
-    );
+  if (diseasesError) return <div>An error occurred while fetching diseases: {diseasesError.message}</div>;
 
   const filterMedicines = (medicines: IMedicine[]) => {
     return medicines.filter((medicine) => {
@@ -51,7 +42,6 @@ export const MedicineList: React.FC = () => {
         (medicine.diseases ?? []).map((d) => d._id),
         diseases || []
       );
-      // console.log("medicineDiseases :", {medicineDiseases}) ;
       const diseasesText = medicineDiseases
         .map((disease) => disease.name)
         .join(", ");
@@ -88,41 +78,40 @@ export const MedicineList: React.FC = () => {
     setUpdateModalOpen(true);
   };
 
-  const rows =
-    currentData?.map((medicine) => {
-      const medicineDiseases = mapIdsToDiseases(
-        (medicine.diseases ?? []).map((d) => d._id),
-        diseases || []
-      );
+  const rows = currentData?.map((medicine) => {
+    const medicineDiseases = mapIdsToDiseases(
+      (medicine.diseases ?? []).map((d) => d._id),
+      diseases || []
+    );
 
-      return (
-        <tr key={medicine._id}>
-          <td>{medicine.name}</td>
-          <td>{medicine.manufacturer}</td>
-          <td>{medicineDiseases.map((disease) => disease.name).join(", ")}</td>
+    return (
+      <tr key={medicine._id}>
+        <td>{medicine.name}</td>
+        <td>{medicine.manufacturer}</td>
+        <td>{medicineDiseases.map((disease) => disease.name).join(", ")}</td>
 
-          <td style={{ width: "10px", whiteSpace: "nowrap" }}>
-            <Button
-              className="text-white bg-red-600"
-              onClick={() => handleDelete(medicine._id)}
-            >
-              <IconTrash size={16} />
-            </Button>
-            <Button
-              className="text-black bg-yellow-300 mx-6"
-              onClick={() => handleUpdate(medicine)}
-            >
-              <IconEdit size={16} />
-            </Button>
-          </td>
-        </tr>
-      );
-    }) || [];
+        <td style={{ width: "10px", whiteSpace: "nowrap" }}>
+          <Button
+            className="text-white bg-red-600"
+            onClick={() => handleDelete(medicine._id)}
+          >
+            <IconTrash size={16} />
+          </Button>
+          <Button
+            className="text-black bg-yellow-300 mx-6"
+            onClick={() => handleUpdate(medicine)}
+          >
+            <IconEdit size={16} />
+          </Button>
+        </td>
+      </tr>
+    );
+  }) || [];
 
   return (
     <section className="h-full w-full">
       <div className="flex flex-row justify-between items-start min-w-full">
-        <CreateMedicine />
+        <CreateMedicine/>
         <TextInput
           className="w-80"
           placeholder="Search"

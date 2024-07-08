@@ -63,11 +63,13 @@ const Sidebar: React.FC<{
   }, []);
 
   useEffect(() => {
+    console.log("Location changed:", location.pathname);
     const currentPath = location.pathname;
     const activeIndex = navItems.findIndex(
       (item) => routes[item] === currentPath
     );
     setActiveNavIndex(activeIndex !== -1 ? activeIndex : 0);
+    console.log("Active Index:", activeIndex);
   }, [location, navItems, setActiveNavIndex]);
 
 

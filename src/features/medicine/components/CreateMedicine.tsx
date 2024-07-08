@@ -1,14 +1,10 @@
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
-import { useCreateMedicine } from "../api/create-medicine";
-import {  IMedicineDTO } from "../model/IMedicine";
 import { Button, Modal, MultiSelect, Stack, TextInput } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { useGetMedicines } from "../api/get-all-medicines";
-
+import { useCreateMedicine } from "../api/create-medicine";
+import { IMedicineDTO } from "../model/IMedicine";
 import { useGetDiseases } from "../../diseases/api/get-all-diseases";
-
-
 import { GiPillDrop } from "react-icons/gi";
 
 const CreateMedicine: React.FC = () => {
@@ -36,14 +32,11 @@ const CreateMedicine: React.FC = () => {
 
   const [opened, { open, close }] = useDisclosure(false);
 
-  const { data: medicines, error, isLoading } = useGetMedicines();
-  const { data: diseases, error:diseaseError, isLoading : diseaseIsLoading } = useGetDiseases();
+  const { data: diseases, error: diseaseError, isLoading: diseaseIsLoading } =
+    useGetDiseases();
 
-  if (isLoading || diseaseIsLoading) return <div>Loading...</div>;
-
-  if (error || diseaseError) return <div>Error</div>;
-
-  if(medicines) console.log(medicines);
+  if (diseaseIsLoading) return <div>Loading...</div>;
+  if (diseaseError) return <div>Error</div>;
 
   const diseaseOptions =
     diseases
@@ -54,7 +47,7 @@ const CreateMedicine: React.FC = () => {
           self.findIndex((d) => d?._id === disease._id) === index
       )
       .map((disease) => ({ value: disease._id, label: disease.name })) || [];
-  
+
   return (
     <>
       <Modal opened={opened} onClose={close} title="New Medicine">

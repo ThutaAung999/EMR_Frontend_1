@@ -12,7 +12,7 @@ interface UpdateMedicineProps {
   closeModal: () => void;
 }
 
-export const UpdateMedicine: React.FC<UpdateMedicineProps> = ({medicine,closeModal,}) => {
+const UpdateMedicine: React.FC<UpdateMedicineProps> = ({medicine,closeModal,}) => {
 
   console.log("medicine to update :",medicine)
   const {control,handleSubmit,formState: { errors },reset,} = useForm<IMedicine>({
@@ -104,3 +104,4 @@ export const UpdateMedicine: React.FC<UpdateMedicineProps> = ({medicine,closeMod
   );
 };
 
+export default UpdateMedicine;
