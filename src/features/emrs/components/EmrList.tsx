@@ -19,7 +19,6 @@ import { useGetMedicines } from "../../medicine/api/get-all-medicines";
 import useGetPatients from "../../patients/api/get-all-patients";
 import UpdateEmr from "../routes/UpdateEmr";
 
-
 import { GiMedicalPack } from "react-icons/gi";
 
 export const EmrList: React.FC = () => {
@@ -109,7 +108,7 @@ export const EmrList: React.FC = () => {
     setConfirmOpen(true);
   };
 
-  const handleConfirmDelete = () => { 
+  const handleConfirmDelete = () => {
     if (selectedEmrId) {
       mutationDelete.mutate(selectedEmrId);
     }
@@ -148,29 +147,30 @@ export const EmrList: React.FC = () => {
         (emr.patients ?? []).map((d) => d._id),
         patients || []
       );
+// Adjusted JSX for table row
+return (
+  <tr key={emr._id}>
+    <td className="py-2 px-4">{emrDiseases.map((disease) => disease.name).join(", ")}</td>
+    <td className="py-2 px-4">{emrMedicines.map((medicine) => medicine.name).join(", ")}</td>
+    <td className="py-2 px-4">{emrPatients.map((patient) => patient.name).join(", ")}</td>
+    <td className="py-2 px-4">{emr.notes}</td>
+    <td className="py-2 px-4 whitespace-nowrap flex flex-wrap gap-2">
+      <Button
+        className="text-white bg-red-600 hover:bg-red-500"
+        onClick={() => handleDelete(emr._id)}
+      >
+        <IconTrash size={16} />
+      </Button>
+      <Button
+        className="text-white bg-yellow-500 hover:bg-yellow-400"
+        onClick={() => handleUpdate(emr)}
+      >
+        <IconEdit size={16} />
+      </Button>
+    </td>
+  </tr>
+);
 
-      return (
-        <tr key={emr._id}>
-          <td>{emrDiseases.map((disease) => disease.name).join(", ")}</td>
-          <td>{emrMedicines.map((medicine) => medicine.name).join(", ")}</td>
-          <td>{emrPatients.map((patient) => patient.name).join(", ")}</td>
-          <td>{emr.notes}</td>
-          <td style={{ width: "10px", whiteSpace: "nowrap" }}>
-            <Button
-              className="text-white bg-red-600"
-              onClick={() => handleDelete(emr._id)}
-            >
-              <IconTrash size={16} />
-            </Button>
-            <Button
-              className="text-black bg-yellow-300 mx-6"
-              onClick={() => handleUpdate(emr)}
-            >
-              <IconEdit size={16} />
-            </Button>
-          </td>
-        </tr>
-      );
     }) || [];
 
   if (updateModalOpen && selectedEmr) {
@@ -183,12 +183,10 @@ export const EmrList: React.FC = () => {
   }
 
   return (
-    <section className="h-full w-full">
+    <section className="h-full w-full bg-gray-50 p-6 rounded-lg shadow-lg">
       <div className="flex flex-row justify-between items-start min-w-full">
         <NavLink to="/emrs/create">
-        <Button  leftIcon={<GiMedicalPack size={18} />}>
-          Add EMR
-          </Button>
+          <Button leftIcon={<GiMedicalPack size={18} />}>Add EMR</Button>
         </NavLink>
         <TextInput
           className="w-80"
@@ -200,15 +198,20 @@ export const EmrList: React.FC = () => {
         />
       </div>
 
-      <div className="h-full w-full">
-        <Table striped highlightOnHover verticalSpacing="md">
-          <thead>
+      <div className="h-full w-full overflow-x-auto">
+        <Table
+          striped
+          highlightOnHover
+          verticalSpacing="md"
+          className="bg-white shadow-sm rounded-lg"
+        >
+          <thead className="bg-gray-200">
             <tr>
-              <th>Diseases</th>
-              <th>Medicines</th>
-              <th>Patients</th>
-              <th>Notes</th>
-              <th>Action</th>
+              <th className="py-2 px-4">Diseases</th>
+              <th className="py-2 px-4">Medicines</th>
+              <th className="py-2 px-4">Patients</th>
+              <th className="py-2 px-4">Notes</th>
+              <th className="py-2 px-4">Action</th>
             </tr>
           </thead>
           <tbody>{rows}</tbody>

@@ -2,13 +2,10 @@ import React, { useState } from "react";
 import { useGetTags } from "../api/get-all-tags";
 import { usePagination } from "@mantine/hooks";
 import { IconEdit, IconSearch, IconTrash } from "@tabler/icons-react";
-
 import { useDeleteTag } from "../api/delete-tag";
 import { ConfirmDialog } from "../../../reusable-components/ConfirmDialog";
 import { CreateTag } from "./CreateTag";
-
 import Pagination from "../../../reusable-components/Pagination";
-
 import { UpdateTag } from "./UpdateTag";
 import { Button, Table, TextInput } from "@mantine/core";
 import { ITag } from "../model/ITag";
@@ -21,9 +18,7 @@ const TagList: React.FC = () => {
   const [selectedTagId, setSelectedTagId] = useState<string | null>(null);
 
   const [selectedTag, setSelectedTag] = useState<ITag | null>(null);
-
   const [updateModalOpen, setUpdateModalOpen] = useState(false);
-
   const [searchQuery, setSearchQuery] = useState("");
 
   const itemsPerPage = 7;
@@ -34,27 +29,21 @@ const TagList: React.FC = () => {
     initialPage: 1,
   });
 
-
   const filterTags = (tagsData: ITag[]) => {
     return tagsData.filter((tag) => {
-      return (
-        tag.name.toLowerCase().includes(searchQuery.toLowerCase())
-        
-      );
+      return tag.name.toLowerCase().includes(searchQuery.toLowerCase());
     });
   };
+
   const filteredData = filterTags(tags || []);
-
-
   const currentData = filteredData.slice(
     (active - 1) * itemsPerPage,
     active * itemsPerPage
   );
 
-
   if (tagsLoading) return <div>Loading...</div>;
   if (tagsError) return <div>Error</div>;
-  if (!tags) return <div> No Diseases</div>;
+  if (!tags) return <div>No Tags</div>;
 
   const handleDelete = (id: string) => {
     setSelectedTagId(id);
@@ -75,20 +64,19 @@ const TagList: React.FC = () => {
   };
 
   const rows =
-  currentData?.map((tag) => {
+    currentData?.map((tag) => {
       return (
         <tr key={tag._id}>
-          <td>{tag.name}</td>
-
-          <td style={{ width: "10px", whiteSpace: "nowrap" }}>
+          <td className="py-2 px-4">{tag.name}</td>
+          <td className="py-2 px-4 w-24 whitespace-nowrap flex gap-2">
             <Button
-              className="text-white bg-red-600"
+              className="text-white bg-red-600 hover:bg-red-500"
               onClick={() => handleDelete(tag._id)}
             >
               <IconTrash size={16} />
             </Button>
             <Button
-              className="text-black bg-yellow-300 mx-6"
+              className="text-white bg-yellow-500 hover:bg-yellow-400"
               onClick={() => handleUpdate(tag)}
             >
               <IconEdit size={16} />
@@ -99,8 +87,8 @@ const TagList: React.FC = () => {
     }) || [];
 
   return (
-    <section className="h-full w-full">
-      <div className="flex flex-row justify-between items-start min-w-full">
+    <section className="h-full w-full bg-gray-50 p-6 rounded-lg shadow-lg">
+      <div className="flex justify-between items-center mb-6">
         <CreateTag />
         <TextInput
           className="w-80"
@@ -113,12 +101,11 @@ const TagList: React.FC = () => {
       </div>
 
       <div className="h-full w-full">
-        <Table striped highlightOnHover verticalSpacing="md">
-          <thead>
+        <Table striped highlightOnHover verticalSpacing="md" className="bg-white shadow-sm rounded-lg">
+          <thead className="bg-gray-200">
             <tr>
-              <th>Name</th>
-
-              <th>Action</th>
+              <th className="py-2 px-4">Name</th>
+              <th className="py-2 px-4">Action</th>
             </tr>
           </thead>
           <tbody>{rows}</tbody>

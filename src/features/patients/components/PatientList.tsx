@@ -14,7 +14,6 @@ import { useGetDiseases } from "../../diseases/api/get-all-diseases";
 import { useGetDoctors } from "../../doctors/api/get-all-doctors";
 
 export const PatientList: React.FC = () => {
-
   const { data, error, isLoading } = useGetPatients();
   const mutationDelete = useDeletePatient();
 
@@ -23,10 +22,8 @@ export const PatientList: React.FC = () => {
 
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [selectedPatientId, setSelectedPatientId] = useState<string | null>(null);
-
   const [selectedPatient, setSelectedPatient] = useState<IPatient | null>(null);
   const [updateModalOpen, setUpdateModalOpen] = useState(false);
-
   const [searchQuery, setSearchQuery] = useState("");
 
   const itemsPerPage = 7;
@@ -70,10 +67,7 @@ export const PatientList: React.FC = () => {
   };
 
   const filteredData = filterPatients(data || []);
-  const currentData = filteredData.slice(
-    (active - 1) * itemsPerPage,
-    active * itemsPerPage
-  );
+  const currentData = filteredData.slice((active - 1) * itemsPerPage, active * itemsPerPage);
 
   const handleDelete = (id: string) => {
     setSelectedPatientId(id);
@@ -92,7 +86,7 @@ export const PatientList: React.FC = () => {
     setSelectedPatient(patient);
     setUpdateModalOpen(true);
   };
-  
+
   const rows = currentData?.map((patient) => {
     const patientDiseases = mapIdsToDiseases(
       (patient.diseases ?? []).map((d) => d._id),
@@ -105,21 +99,15 @@ export const PatientList: React.FC = () => {
 
     return (
       <tr key={patient._id}>
-        <td>{patient.name}</td>
-        <td>{patient.age}</td>
-        <td>{patientDiseases.map((disease) => disease.name).join(", ")}</td>
-        <td>{patientDoctors.map((doctor) => doctor.name).join(", ")}</td>
-        <td style={{ width: "10px", whiteSpace: "nowrap" }}>
-          <Button
-            className="text-white bg-red-600"
-            onClick={() => handleDelete(patient._id )}
-          >
+        <td className="py-2 px-4">{patient.name}</td>
+        <td className="py-2 px-4">{patient.age}</td>
+        <td className="py-2 px-4">{patientDiseases.map((disease) => disease.name).join(", ")}</td>
+        <td className="py-2 px-4">{patientDoctors.map((doctor) => doctor.name).join(", ")}</td>
+        <td className="py-2 px-4 w-24 whitespace-nowrap flex gap-2">
+            <Button className="text-white bg-red-600 hover:bg-red-500" onClick={() => handleDelete(patient._id)}>
             <IconTrash size={16} />
           </Button>
-          <Button
-            className="text-black bg-yellow-300 mx-6"
-            onClick={() => handleUpdate(patient)}
-          >
+          <Button className="text-white bg-yellow-500 hover:bg-yellow-400" onClick={() => handleUpdate(patient)}>
             <IconEdit size={16} />
           </Button>
         </td>
@@ -128,8 +116,8 @@ export const PatientList: React.FC = () => {
   }) || [];
 
   return (
-    <section className="h-full w-full">
-      <div className="flex flex-row justify-between items-start min-w-full">
+      <section className="h-full w-full bg-gray-50 p-6 rounded-lg shadow-lg">
+      <div className="flex justify-between items-center mb-6">
         <CreatePatient />
         <TextInput
           className="w-80"
@@ -142,36 +130,24 @@ export const PatientList: React.FC = () => {
       </div>
 
       <div className="h-full w-full">
-        <Table striped highlightOnHover verticalSpacing="md">
-          <thead>
+        <Table striped highlightOnHover verticalSpacing="md" className="bg-white shadow-sm rounded-lg">
+          <thead className="bg-gray-200">
             <tr>
-              <th>Name</th>
-              <th>Age</th>
-              <th>Diseases</th>
-              <th>Doctors</th>
-              <th>Action</th>
+              <th className="py-2 px-4">Name</th>
+              <th className="py-2 px-4">Age</th>
+              <th className="py-2 px-4">Diseases</th>
+              <th className="py-2 px-4">Doctors</th>
+              <th className="py-2 px-4">Action</th>
             </tr>
           </thead>
           <tbody>{rows}</tbody>
         </Table>
 
-        <Pagination
-          active={active}
-          totalPages={totalPages}
-          setPage={setPage}
-          next={next}
-          previous={previous}
-        />
-        <ConfirmDialog
-          open={confirmOpen}
-          onClose={() => setConfirmOpen(false)}
-          onConfirm={handleConfirmDelete}
-        />
+        <Pagination active={active} totalPages={totalPages} setPage={setPage} next={next} previous={previous} />
+
+        <ConfirmDialog open={confirmOpen} onClose={() => setConfirmOpen(false)} onConfirm={handleConfirmDelete} />
         {updateModalOpen && selectedPatient && (
-          <UpdatePatient
-            patient={selectedPatient}
-            closeModal={() => setUpdateModalOpen(false)}
-          />
+          <UpdatePatient patient={selectedPatient} closeModal={() => setUpdateModalOpen(false)} />
         )}
       </div>
     </section>

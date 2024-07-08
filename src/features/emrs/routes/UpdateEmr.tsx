@@ -36,6 +36,7 @@ const UpdateEmr: React.FC<UpdateEmrProps> = ({ emr, closeModal }) => {
   const [uploadedImages, setUploadedImages] = useState<EmrImage[]>(emr.emrImages);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]); // Add this state
 
   const { data: diseases } = useGetDiseases();
   const { data: medicines } = useGetMedicines();
@@ -44,19 +45,24 @@ const UpdateEmr: React.FC<UpdateEmrProps> = ({ emr, closeModal }) => {
 
   const mutation = useUpdateEmr();
 
-  const handleImageUpload = async (files: FileList | null) => {
+  const handleImageSelect = (files: FileList | null) => {
     if (!files || files.length === 0) return;
 
+    const fileArray = Array.from(files);
+    setSelectedFiles(fileArray);
+  };
+
+  const handleImageUpload = async () => {
+    if (selectedFiles.length === 0) return;
+
     const formData = new FormData();
-    Array.from(files).forEach((file) => {
+    selectedFiles.forEach((file) => {
       formData.append("image", file);
     });
 
     try {
       const res = await axios.post(
-       
         "https://emr-backend-intz.onrender.com/api/emrs/uploads",
-        //"http://localhost:9999/api/emrs/uploads",
         formData,
         {
           headers: {
@@ -72,15 +78,17 @@ const UpdateEmr: React.FC<UpdateEmrProps> = ({ emr, closeModal }) => {
       setUploadedImages((prev) => [...prev, ...newImages]);
       setSelectedTags([]); // Reset tags after saving
       setModalOpen(false); // Close modal after saving
+      setSelectedFiles([]); // Clear selected files
     } catch (err) {
       console.error(err);
     }
   };
 
   const handleRemoveImage = (index: number) => {
-    // Create a new array without the image at the specified index
-    const updatedImages = uploadedImages.filter((_, i) => i !== index);
-    setUploadedImages(updatedImages);
+    // Remove the image from selected files if not uploaded yet
+    setSelectedFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
+    // Remove the image from uploaded images if already uploaded
+    setUploadedImages((prevImages) => prevImages.filter((_, i) => i !== index));
   };
 
   const onSubmit = (data: IEmrDTO) => {
@@ -100,37 +108,44 @@ const UpdateEmr: React.FC<UpdateEmrProps> = ({ emr, closeModal }) => {
     patients?.map((patient) => ({ value: patient._id, label: patient.name })) || [];
 
   const medicineOptions =
-    medicines?.map((medicine) => ({ value: medicine._id, label: medicine.name })) || [];
+    medicines?.map((medicine) => ({
+      value: medicine._id,
+      label: medicine.name,
+    })) || [];
 
   const tagsOptions =
     tags?.map((tag) => ({ value: tag._id, label: tag.name })) || [];
 
   return (
     <div className="h-screen w-full">
-      <form onSubmit={handleSubmit(onSubmit)} className="w-full" encType="multipart/form-data">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="w-full"
+        encType="multipart/form-data"
+      >
         <Stack>
           <Controller
             name="emrImages"
             control={control}
             render={() => (
               <div className="flex flex-row items-center">
-                <Button leftIcon={<FaPlus />} onClick={() => setModalOpen(true)}>
+                <Button
+                  leftIcon={<FaPlus />}
+                  onClick={() => setModalOpen(true)}
+                >
                   Add Item
                 </Button>
 
-                
                 <div className="mt-2 flex flex-row items-center space-x-4 ">
                   {uploadedImages.map((image, index) => (
                     <div key={index} className="relative ">
                       <img
-                      
-                      
-                      //src={`http://localhost:9999/${image.image}`} // Correct image path  
-                      src={`https://emr-backend-intz.onrender.com/${image.image}`} // Correct image path
+                        src={`https://emr-backend-intz.onrender.com/${image.image}`}
                         alt="Uploaded"
-                        className="object-cover w-32 h-32 rounded-lg shadow-md  mx-3 " 
+                        className="object-cover w-32 h-32 rounded-lg shadow-md mx-3 "
                       />
-                      <button type='button'
+                      <button
+                        type="button"
                         className="absolute top-0 right-0 "
                         onClick={() => handleRemoveImage(index)} // Pass index to handleRemoveImage
                       >
@@ -218,14 +233,26 @@ const UpdateEmr: React.FC<UpdateEmrProps> = ({ emr, closeModal }) => {
         title="Upload Image and Add Tags"
       >
         <Stack>
-          <Button onClick={() => fileInputRef.current?.click()}>Add Photo</Button>
+          <Button onClick={() => fileInputRef.current?.click()}>
+            Add Photo
+          </Button>
           <input
             type="file"
             multiple
             ref={fileInputRef}
             style={{ display: "none" }}
-            onChange={(e) => handleImageUpload(e.target.files)}
+            onChange={(e) => handleImageSelect(e.target.files)}
           />
+          <div className="mt-4 flex flex-row flex-wrap gap-4">
+            {selectedFiles.map((file, index) => (
+              <img
+                key={index}
+                src={URL.createObjectURL(file)}
+                alt="Selected"
+                className="w-48 h-48 "
+              />
+            ))}
+          </div>
           <MultiSelect
             data={tagsOptions}
             label="Tags"
@@ -235,15 +262,7 @@ const UpdateEmr: React.FC<UpdateEmrProps> = ({ emr, closeModal }) => {
           />
           <div className="flex flex-row gap-6 justify-end mt-4">
             <Button onClick={() => setModalOpen(false)}>Cancel</Button>
-            <Button
-              onClick={() => {
-                if (fileInputRef.current?.files) {
-                  handleImageUpload(fileInputRef.current.files);
-                }
-              }}
-            >
-              Save
-            </Button>
+            <Button onClick={handleImageUpload}>Save Changes</Button>
           </div>
         </Stack>
       </Modal>

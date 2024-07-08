@@ -9,7 +9,7 @@ export function useDeleteEmr() {
         const response = await fetch(
           
           //`http://localhost:9999/api/emrs/${emrId}`,
-          `http://https://emr-backend-intz.onrender.com/api/emrs/${emrId}`,
+          `https://emr-backend-intz.onrender.com/api/emrs/${emrId}`,
           {
             method: "DELETE",
           }

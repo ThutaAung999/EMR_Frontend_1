@@ -86,21 +86,14 @@ export const MedicineList: React.FC = () => {
 
     return (
       <tr key={medicine._id}>
-        <td>{medicine.name}</td>
-        <td>{medicine.manufacturer}</td>
-        <td>{medicineDiseases.map((disease) => disease.name).join(", ")}</td>
-
-        <td style={{ width: "10px", whiteSpace: "nowrap" }}>
-          <Button
-            className="text-white bg-red-600"
-            onClick={() => handleDelete(medicine._id)}
-          >
+        <td className="py-2 px-4">{medicine.name}</td>
+        <td className="py-2 px-4">{medicine.manufacturer}</td>
+        <td className="py-2 px-4">{medicineDiseases.map((disease) => disease.name).join(", ")}</td>
+        <td className="py-2 px-4 w-24 whitespace-nowrap flex gap-2">
+          <Button className="text-white bg-red-600 hover:bg-red-500" onClick={() => handleDelete(medicine._id)}>
             <IconTrash size={16} />
           </Button>
-          <Button
-            className="text-black bg-yellow-300 mx-6"
-            onClick={() => handleUpdate(medicine)}
-          >
+          <Button className="text-white bg-yellow-500 hover:bg-yellow-400" onClick={() => handleUpdate(medicine)}>
             <IconEdit size={16} />
           </Button>
         </td>
@@ -109,9 +102,9 @@ export const MedicineList: React.FC = () => {
   }) || [];
 
   return (
-    <section className="h-full w-full">
-      <div className="flex flex-row justify-between items-start min-w-full">
-        <CreateMedicine/>
+    <section className="h-full w-full bg-gray-50 p-6 rounded-lg shadow-lg">
+      <div className="flex justify-between items-center mb-6">
+        <CreateMedicine />
         <TextInput
           className="w-80"
           placeholder="Search"
@@ -123,35 +116,23 @@ export const MedicineList: React.FC = () => {
       </div>
 
       <div className="h-full w-full">
-        <Table striped highlightOnHover verticalSpacing="md">
-          <thead>
+        <Table striped highlightOnHover verticalSpacing="md" className="bg-white shadow-sm rounded-lg">
+          <thead className="bg-gray-200">
             <tr>
-              <th>Name</th>
-              <th>Manufacturer</th>
-              <th>Diseases</th>
-              <th>Action</th>
+              <th className="py-2 px-4">Name</th>
+              <th className="py-2 px-4">Manufacturer</th>
+              <th className="py-2 px-4">Diseases</th>
+              <th className="py-2 px-4">Action</th>
             </tr>
           </thead>
           <tbody>{rows}</tbody>
         </Table>
 
-        <Pagination
-          active={active}
-          totalPages={totalPages}
-          setPage={setPage}
-          next={next}
-          previous={previous}
-        />
-        <ConfirmDialog
-          open={confirmOpen}
-          onClose={() => setConfirmOpen(false)}
-          onConfirm={handleConfirmDelete}
-        />
+        <Pagination active={active} totalPages={totalPages} setPage={setPage} next={next} previous={previous} />
+
+        <ConfirmDialog open={confirmOpen} onClose={() => setConfirmOpen(false)} onConfirm={handleConfirmDelete} />
         {updateModalOpen && selectedMedicine && (
-          <UpdateMedicine
-            medicine={selectedMedicine}
-            closeModal={() => setUpdateModalOpen(false)}
-          />
+          <UpdateMedicine medicine={selectedMedicine} closeModal={() => setUpdateModalOpen(false)} />
         )}
       </div>
     </section>
