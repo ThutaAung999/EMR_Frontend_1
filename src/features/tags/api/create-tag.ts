@@ -12,9 +12,10 @@ export function useCreateTag(onSuccessCallback?: () => void) {
 
             console.log('Payload being sent:', tag); // Log payload
 
-            
+            const apiUrl = import.meta.env.VITE_API_URL;  
             //const response = await fetch('http://localhost:9999/api/tags', {
-                const response = await fetch('https://emr-backend-intz.onrender.com/api/tags', {
+                //const response = await fetch('https://emr-backend-intz.onrender.com/api/tags', {
+                const response = await fetch(apiUrl+'api/tags', {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json',

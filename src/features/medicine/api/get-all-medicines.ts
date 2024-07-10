@@ -2,9 +2,12 @@ import { useQuery, UseQueryOptions } from "@tanstack/react-query";
 import { IMedicine } from "../model/IMedicine";
 
 export const fetchMedicines = async () => {
+  
   console.log("fetchMedicines from frontend");
 
-  const response = await fetch("https://emr-backend-intz.onrender.com/api/medicines");
+  const apiUrl = import.meta.env.VITE_API_URL; 
+  //const response = await fetch("https://emr-backend-intz.onrender.com/api/medicines");
+  const response = await fetch(apiUrl+"api/medicines");
   if (!response.ok) {
     if (response.status === 429) {
       throw new Error("Rate limit exceeded");

@@ -7,8 +7,10 @@ export function useUpdateEmr() {
 
   const updateEmr = useMutation({
     mutationFn: async (updatedEmr: IEmrDTO) => {
-      
-      const response = await fetch(`https://emr-backend-intz.onrender.com/api/emrs/${updatedEmr._id}`, {
+
+      const apiUrl = import.meta.env.VITE_API_URL;  
+      //const response = await fetch(`https://emr-backend-intz.onrender.com/api/emrs/${updatedEmr._id}`, {
+      const response = await fetch(apiUrl+`api/emrs/${updatedEmr._id}`, {
       //const response = await fetch(`http://localhost:9999/api/emrs/${updatedEmr._id}`, {
         method: "PATCH", // or "PUT" if you prefer full update
         headers: {

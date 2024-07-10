@@ -5,7 +5,10 @@ import { IEmr } from '../model/emr.model';
 export const fetchEmrs = async (): Promise<IEmr[]> => {
   console.log("fetchEmrs from frontend");
 
-  const response = await fetch('https://emr-backend-intz.onrender.com/api/emrs');
+  const apiUrl = import.meta.env.VITE_API_URL;  
+
+  //const response = await fetch('https://emr-backend-intz.onrender.com/api/emrs');
+  const response = await fetch(apiUrl+'api/emrs');
   //const response = await fetch('http://localhost:9999/api/emrs');
   if (!response.ok) {
     if (response.status === 429) {

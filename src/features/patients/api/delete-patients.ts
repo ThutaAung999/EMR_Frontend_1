@@ -5,12 +5,15 @@ import { IPatient } from "../model/IPatient";
 export function useDeletePatient() {
     const queryClient = useQueryClient();
     return useMutation({
+      
       mutationFn: async (patientId: string) => {
+        const apiUrl = import.meta.env.VITE_API_URL;
+
         const response = await fetch(
           
           //`http://localhost:9999/api/patients/${patientId}`,
-          `https://emr-backend-intz.onrender.com
-/api/patients/${patientId}`,
+          //`https://emr-backend-intz.onrender.com/api/patients/${patientId}`,
+          apiUrl+`api/patients/${patientId}`,
           {
             method: "DELETE",
           }

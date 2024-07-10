@@ -5,7 +5,11 @@ import { ITag } from "../model/ITag";
 export const fetchTags = async (): Promise<ITag[]> => {
   console.log("fetchTags from frontend");
 
-  const response = await fetch("https://emr-backend-intz.onrender.com/api/tags");
+  const apiUrl = import.meta.env.VITE_API_URL;  
+
+  //const response = await fetch("https://emr-backend-intz.onrender.com/api/tags");
+  const response = await fetch(apiUrl+"api/tags");
+
   //const response = await fetch("http://localhost:9999/api/tags");
   if (!response.ok) {
     if (response.status === 429) {

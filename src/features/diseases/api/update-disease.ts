@@ -7,9 +7,9 @@ export function useUpdateDisease() {
   const updateDisease = useMutation({
     mutationFn: async (updatedDisease: IDisease) => {
     
-      
+      const apiUrl = import.meta.env.VITE_API_URL;  
       //const response = await fetch(`http://localhost:9999/api/diseases/${updatedDisease._id}`, {
-      const response = await fetch(`https://emr-backend-intz.onrender.com/api/diseases/${updatedDisease._id}`, {
+      const response = await fetch(apiUrl+`api/diseases/${updatedDisease._id}`, {
         method: "PATCH", // or "PUT" if you prefer full update
         headers: {
           'Content-Type': 'application/json',

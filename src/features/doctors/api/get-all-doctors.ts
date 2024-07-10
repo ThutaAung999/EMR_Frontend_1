@@ -5,7 +5,9 @@ import { IDoctor } from "../model/IDoctor";
 export const fetchDoctors = async (): Promise<IDoctor[]> => {
   console.log("fetchDoctors from frontend");
 
-  const response = await fetch("https://emr-backend-intz.onrender.com/api/doctors");
+  const apiUrl = import.meta.env.VITE_API_URL;  
+
+  const response = await fetch(apiUrl+"api/doctors");
   //const response = await fetch("http://localhost:9999/api/doctors");
   if (!response.ok) {
     if (response.status === 429) {

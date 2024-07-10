@@ -6,10 +6,13 @@ export function useDeleteMedicine() {
     const queryClient = useQueryClient();
     return useMutation({
       mutationFn: async (medicineId: string) => {
+
+        const apiUrl = import.meta.env.VITE_API_URL; 
         const response = await fetch(
           
           //`http://localhost:9999/api/medicines/${medicineId}`,
-          `https://emr-backend-intz.onrender.com/api/medicines/${medicineId}`,
+          //`https://emr-backend-intz.onrender.com/api/medicines/${medicineId}`,
+          apiUrl+`api/medicines/${medicineId}`,
           {
             method: "DELETE",
           }

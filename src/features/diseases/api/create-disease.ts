@@ -12,9 +12,10 @@ export function useCreateDisease(onSuccessCallback?: () => void) {
 
             console.log('Payload being sent:', disease); // Log payload
             
-            
+            const apiUrl = import.meta.env.VITE_API_URL;
             //const response = await fetch('http://localhost:9999/api/diseases', {
-            const response = await fetch('https://emr-backend-intz.onrender.com/api/diseases', {
+            //const response = await fetch('https://emr-backend-intz.onrender.com/api/diseases', {
+                const response = await fetch(apiUrl+'api/diseases', {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json',

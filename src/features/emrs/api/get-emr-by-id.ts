@@ -4,8 +4,9 @@ import { IEmr } from '../model/emr.model';
 //--------------------------
 const fetchEmrById = async (id: string): Promise<IEmr> => {
 
-  
-  const response = await fetch(`https://emr-backend-intz.onrender.com/api/emrs/${id}`);
+  const apiUrl = import.meta.env.VITE_API_URL;  
+  //const response = await fetch(`https://emr-backend-intz.onrender.com/api/emrs/${id}`);
+  const response = await fetch(apiUrl+`api/emrs/${id}`);
   //const response = await fetch(`http://localhost:9999/api/emrs/${id}`);
   
   if (!response.ok) {
