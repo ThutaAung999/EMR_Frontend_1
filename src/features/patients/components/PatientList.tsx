@@ -5,7 +5,7 @@ import { usePagination } from "@mantine/hooks";
 import { useDeletePatient } from "../api/delete-patients";
 import { ConfirmDialog } from "../../../reusable-components/ConfirmDialog";
 import CreatePatient from "./CreatePatient";
-import { mapIdsToDiseases, mapIdsToDoctors } from "./util";
+//import { mapIdsToDiseases, mapIdsToDoctors } from "./util";
 import { IPatient } from "../model/IPatient";
 import { IconEdit, IconSearch, IconTrash } from "@tabler/icons-react";
 import UpdatePatient from "./UpdatePatient";
@@ -41,15 +41,11 @@ export const PatientList: React.FC = () => {
 
   const filterPatients = (patients: IPatient[]) => {
     return patients.filter((patient) => {
-      const patientDiseases = mapIdsToDiseases(
-        (patient.diseases ?? []).map((d) => d._id),
-        diseases || []
-      );
-      const patientDoctors = mapIdsToDoctors(
-        (patient.doctors ?? []).map((d) => d._id),
-        doctors || []
-      );
 
+      const patientDiseases =patient.diseases ?? [];
+      const patientDoctors=patient.doctors ?? [];
+
+      
       const diseasesText = patientDiseases
         .map((disease) => disease.name)
         .join(", ");
@@ -88,14 +84,9 @@ export const PatientList: React.FC = () => {
   };
 
   const rows = currentData?.map((patient) => {
-    const patientDiseases = mapIdsToDiseases(
-      (patient.diseases ?? []).map((d) => d._id),
-      diseases || []
-    );
-    const patientDoctors = mapIdsToDoctors(
-      (patient.doctors ?? []).map((d) => d._id),
-      doctors || []
-    );
+    const patientDiseases = patient.diseases ?? [] ;
+      
+    const patientDoctors = patient.doctors ?? [] ;
 
     return (
       <tr key={patient._id}>

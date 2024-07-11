@@ -61,6 +61,7 @@ const CreatePatient: React.FC = () => {
 
 
   const diseaseOptions =
+  
     diseases
       ?.filter(
         (disease, index, self) =>

@@ -4,11 +4,7 @@ import { usePagination } from "@mantine/hooks";
 import { useDeleteEmr } from "../api/delete-emr";
 import { ConfirmDialog } from "../../../reusable-components/ConfirmDialog";
 import { NavLink } from "react-router-dom";
-import {
-  mapIdsToDiseases,
-  mapIdsToPatients,
-  mapIdsToMedicines,
-} from "../../patients/components/util";
+
 import { IEmr, IEmrDTO } from "../model/emr.model"; // Import IEmrDTO
 import { IconEdit, IconSearch, IconTrash } from "@tabler/icons-react";
 import Pagination from "../../../reusable-components/Pagination";
@@ -64,18 +60,9 @@ export const EmrList: React.FC = () => {
 
   const filterEmrs = (emrs: IEmr[]) => {
     return emrs.filter((emr) => {
-      const emrDiseases = mapIdsToDiseases(
-        (emr.diseases ?? []).map((d) => d._id),
-        diseases || []
-      );
-      const emrMedicines = mapIdsToMedicines(
-        (emr.medicines ?? []).map((d) => d._id),
-        medicines || []
-      );
-      const emrPatients = mapIdsToPatients(
-        (emr.patients ?? []).map((d) => d._id),
-        patients || []
-      );
+      const emrDiseases = emr.diseases ?? [];
+      const emrMedicines = emr.medicines ?? [];
+      const emrPatients = emr.patients ?? [];
 
       const diseasesText = emrDiseases
         .map((disease) => disease.name)
@@ -132,21 +119,16 @@ export const EmrList: React.FC = () => {
   };
 
   const rows =
-    currentData?.map((emr) => {
-      const emrDiseases = mapIdsToDiseases(
+    currentData?.map((emr) => { 
+      /* const emrDiseases = mapIdsToDiseases(
         (emr.diseases ?? []).map((d) => d._id),
         diseases || []
-      );
+      ); */
 
-      const emrMedicines = mapIdsToMedicines(
-        (emr.medicines ?? []).map((d) => d._id),
-        medicines || []
-      );
+      const emrDiseases = emr.diseases ??[];
+      const emrMedicines = emr.medicines || [];
+      const emrPatients = emr.patients || [];
 
-      const emrPatients = mapIdsToPatients(
-        (emr.patients ?? []).map((d) => d._id),
-        patients || []
-      );
 // Adjusted JSX for table row
 return (
   <tr key={emr._id}>

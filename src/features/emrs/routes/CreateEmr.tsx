@@ -13,6 +13,8 @@ import { useGetTags } from "../../tags/api/get-all-tags";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 const CreateEmr: React.FC = () => {
+  const apiUrl = import.meta.env.VITE_API_URL;
+
   const {
     control,
     handleSubmit,
@@ -32,10 +34,11 @@ const CreateEmr: React.FC = () => {
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  const { data: emrs , error, isLoading } = useGetEmrs();
-  
-  
-  if(emrs){console.log("emrs:",emrs)}
+  const { data: emrs, error, isLoading } = useGetEmrs();
+
+  if (emrs) {
+    console.log("emrs:", emrs);
+  }
 
   const {
     data: diseases,
@@ -86,9 +89,9 @@ const CreateEmr: React.FC = () => {
 
     try {
       const res = await axios.post(
-
         //"http://localhost:9999/api/emrs/uploads",
-        "https://emr-backend-intz.onrender.com/api/emrs/uploads",
+        //"https://emr-backend-intz.onrender.com/api/emrs/uploads",
+        apiUrl + "api/emrs/uploads",
         formData,
         {
           headers: {
@@ -96,6 +99,7 @@ const CreateEmr: React.FC = () => {
           },
         }
       );
+
       const { images } = res.data;
       const newImages: EmrImage[] = images.map((image: { image: string }) => ({
         image: image.image,
@@ -109,9 +113,10 @@ const CreateEmr: React.FC = () => {
       console.error(err);
     }
   };
-
+  
   const handleRemoveImage = (index: number) => {
     // Remove the image from selected files if not uploaded yet
+    //This function receives the current state (prevFiles) and returns the new state.
     setSelectedFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
     // Remove the image from uploaded images if already uploaded
     setUploadedImages((prevImages) => prevImages.filter((_, i) => i !== index));
@@ -170,7 +175,6 @@ const CreateEmr: React.FC = () => {
           tag && tag._id && self.findIndex((t) => t?._id === tag._id) === index
       )
       .map((tag) => ({ value: tag._id, label: tag.name })) || [];
-  
 
   return (
     <section className="h-full w-full">
@@ -186,7 +190,6 @@ const CreateEmr: React.FC = () => {
               control={control}
               render={() => (
                 <div className="flex flex-row items-center">
-                  
                   <Button
                     leftIcon={<FaPlus />}
                     onClick={() => setModalOpen(true)}
@@ -198,14 +201,15 @@ const CreateEmr: React.FC = () => {
                     {uploadedImages.map((image, index) => (
                       <div key={index} className="relative">
                         <img
-                        
-                        src={`https://emr-backend-intz.onrender.com/${image.image}`}
+                          //src={`https://emr-backend-intz.onrender.com/${image.image}`}
                           //src={`http://localhost:9999/${image.image}`} // Correct image path
+                          src={apiUrl + `${image.image}`}
                           alt="Uploaded"
                           className="w-24 h-24 rounded-full"
                           style={{ margin: "10px" }}
                         />
-                        <button type='button'
+                        <button
+                          type="button"
                           className="absolute top-0 right-0"
                           onClick={() => handleRemoveImage(index)} // Pass index to handleRemoveImage
                         >
@@ -293,7 +297,7 @@ const CreateEmr: React.FC = () => {
         </form>
       </div>
 
-      <Modal
+      < Modal
         opened={modalOpen}
         onClose={() => setModalOpen(false)}
         title="Upload Image and Tags"
@@ -326,7 +330,7 @@ const CreateEmr: React.FC = () => {
             placeholder="Select tags"
             value={selectedTags}
             onChange={setSelectedTags}
-        /*     styles={dropdownStyles} */
+            /*     styles={dropdownStyles} */
           />
           <div className="flex flex-row gap-6 justify-end mt-4">
             <Button onClick={() => setModalOpen(false)}>Cancel</Button>

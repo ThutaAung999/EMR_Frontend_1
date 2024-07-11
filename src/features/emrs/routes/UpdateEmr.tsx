@@ -11,11 +11,15 @@ import axios from "axios";
 import { FaPlus, FaTimes } from "react-icons/fa";
 
 export interface UpdateEmrProps {
+  
   emr: IEmrDTO;
   closeModal: () => void;
 }
 
 const UpdateEmr: React.FC<UpdateEmrProps> = ({ emr, closeModal }) => {
+
+  const apiUrl = import.meta.env.VITE_API_URL;
+
   const {
     control,
     handleSubmit,
@@ -62,7 +66,8 @@ const UpdateEmr: React.FC<UpdateEmrProps> = ({ emr, closeModal }) => {
 
     try {
       const res = await axios.post(
-        "https://emr-backend-intz.onrender.com/api/emrs/uploads",
+        //"https://emr-backend-intz.onrender.com/api/emrs/uploads",
+        apiUrl+"api/emrs/uploads",
         formData,
         {
           headers: {
@@ -140,7 +145,10 @@ const UpdateEmr: React.FC<UpdateEmrProps> = ({ emr, closeModal }) => {
                   {uploadedImages.map((image, index) => (
                     <div key={index} className="relative ">
                       <img
-                        src={`https://emr-backend-intz.onrender.com/${image.image}`}
+
+                        //src={`https://emr-backend-intz.onrender.com/${image.image}`}
+                        src={apiUrl+`${image.image}`}
+                        
                         alt="Uploaded"
                         className="object-cover w-32 h-32 rounded-lg shadow-md mx-3 "
                       />

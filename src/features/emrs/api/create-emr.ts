@@ -6,7 +6,10 @@ export function useCreateEmr(onSuccessCallback?: () => void) {
     return useMutation({
         mutationFn: async (emr: IEmrDTO) => {
             // Client-side validation (example)
-            if (!emr.notes || !Array.isArray(emr.diseases) || !Array.isArray(emr.medicines) || !Array.isArray(emr.patients)) {
+            if (!emr.notes || 
+                !Array.isArray(emr.diseases) || 
+                !Array.isArray(emr.medicines) || 
+                !Array.isArray(emr.patients)) {
                 throw new Error("All fields are required and must be in the correct format.");
             }
 
@@ -33,6 +36,8 @@ export function useCreateEmr(onSuccessCallback?: () => void) {
             return response.json();
         },
 
+        //Optimistic update
+        //This function is called before the mutation function runs
         onMutate: (newEmrInfo: IEmrDTO) => {
             queryClient.setQueryData(
                 ['emrs'],
@@ -46,8 +51,10 @@ export function useCreateEmr(onSuccessCallback?: () => void) {
             );
         },
 
+        //This function is called after the mutation function either succeeds or fails.
         onSettled: () => queryClient.invalidateQueries({ queryKey: ['emrs'] }),
 
+        //This function is called if the mutation function succeeds.
         onSuccess: () => {
             if (onSuccessCallback) {
                 onSuccessCallback();

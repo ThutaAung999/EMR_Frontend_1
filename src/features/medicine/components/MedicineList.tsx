@@ -4,7 +4,7 @@ import { Button, Table, TextInput } from "@mantine/core";
 import { usePagination } from "@mantine/hooks";
 import { useDeleteMedicine } from "../api/delete-medicine";
 import { ConfirmDialog } from "../../../reusable-components/ConfirmDialog";
-import { mapIdsToDiseases } from "../../patients/components/util";
+
 import { IMedicine } from "../model/IMedicine";
 import { IconEdit, IconSearch, IconTrash } from "@tabler/icons-react";
 import UpdateMedicine from "./UpdateMedicine";
@@ -38,10 +38,9 @@ export const MedicineList: React.FC = () => {
 
   const filterMedicines = (medicines: IMedicine[]) => {
     return medicines.filter((medicine) => {
-      const medicineDiseases = mapIdsToDiseases(
-        (medicine.diseases ?? []).map((d) => d._id),
-        diseases || []
-      );
+   
+      const medicineDiseases = medicine.diseases ?? [];
+
       const diseasesText = medicineDiseases
         .map((disease) => disease.name)
         .join(", ");
@@ -79,10 +78,7 @@ export const MedicineList: React.FC = () => {
   };
 
   const rows = currentData?.map((medicine) => {
-    const medicineDiseases = mapIdsToDiseases(
-      (medicine.diseases ?? []).map((d) => d._id),
-      diseases || []
-    );
+    const medicineDiseases = medicine.diseases ?? [];
 
     return (
       <tr key={medicine._id}>
