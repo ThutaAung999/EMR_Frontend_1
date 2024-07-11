@@ -33,7 +33,14 @@ export function useCreateDisease(onSuccessCallback?: () => void) {
             return response.json();
         },
 
-        onMutate: (newDiseaseInfo: IDiseaseDTO) => {
+        onMutate: async (newDiseaseInfo: IDiseaseDTO) => {
+
+            // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
+            await queryClient.cancelQueries({ queryKey: ['diseases'] });
+
+            // Snapshot the previous value
+            const previousDiseases = queryClient.getQueryData<IDisease[]>(['diseases']) ??[];
+
             queryClient.setQueryData(
                 ['diseases'],
                 (prevDiseases: IDisease[]) => [
@@ -44,6 +51,8 @@ export function useCreateDisease(onSuccessCallback?: () => void) {
                     },
                 ] as IDisease[],
             );
+            // Return a context with the previous and new disease
+            return { previousDiseases };
         },
 
         onSettled: () => queryClient.invalidateQueries({ queryKey: ['diseases'] }),
@@ -54,8 +63,13 @@ export function useCreateDisease(onSuccessCallback?: () => void) {
             }
         },
 
-        onError: (error: Error) => {
+        onError: (error: Error , newDiseaseInfo: IDiseaseDTO, context?: { previousDiseases: IDisease[] }) => {
+            console.log("New Disease Info: " + JSON.stringify(newDiseaseInfo));
             console.error("Error creating disease:", error.message);
+
+            if(context?.previousDiseases){
+                queryClient.setQueryData(['diseases'],context.previousDiseases)
+            }
         },
     });
 }

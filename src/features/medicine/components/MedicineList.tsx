@@ -3,12 +3,12 @@ import { useGetMedicines } from "../api/get-all-medicines";
 import { Button, Table, TextInput } from "@mantine/core";
 import { usePagination } from "@mantine/hooks";
 import { useDeleteMedicine } from "../api/delete-medicine";
-import { ConfirmDialog } from "../../../reusable-components/ConfirmDialog";
+import { ConfirmDialog } from "../../../components/reusable-components/ConfirmDialog";
 
 import { IMedicine } from "../model/IMedicine";
 import { IconEdit, IconSearch, IconTrash } from "@tabler/icons-react";
 import UpdateMedicine from "./UpdateMedicine";
-import Pagination from "../../../reusable-components/Pagination";
+import Pagination from "../../../components/reusable-components/Pagination";
 
 import CreateMedicine from "./CreateMedicine";
 

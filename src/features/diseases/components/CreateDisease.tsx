@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Button, TextInput, Stack, Modal } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
@@ -22,13 +22,21 @@ export const CreateDisease: React.FC = () => {
     },
   });
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const mutation = useCreateDisease(() => {
+    setIsSubmitting(false);
     close();
     reset();
   });
 
   const onSubmit = (data: IDiseaseDTO) => {
-    mutation.mutate(data);
+    setIsSubmitting(true);
+    mutation.mutate(data, {
+      onError: () => {
+        setIsSubmitting(false);
+      },
+    });
   };
 
   const [opened, { open, close }] = useDisclosure(false);
@@ -68,7 +76,7 @@ export const CreateDisease: React.FC = () => {
 
             <div className="flex flex-row gap-6 justify-end">
               <Button onClick={close}>Cancel</Button>
-              <Button type="submit">Save</Button>
+              <Button type="submit" disabled={isSubmitting}>Save</Button>
             </div>
           </Stack>
         </form>

@@ -1,6 +1,6 @@
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Button, Modal, MultiSelect, Stack, TextInput } from "@mantine/core";
+import { Button, Modal, MultiSelect, Stack, TextInput,Loader } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useCreateMedicine } from "../api/create-medicine";
 import { IMedicineDTO } from "../model/IMedicine";
@@ -99,8 +99,10 @@ const CreateMedicine: React.FC = () => {
             />
 
             <div className="flex flex-row gap-6 justify-end">
-              <Button onClick={close}>Cancel</Button>
-              <Button type="submit">Save</Button>
+              <Button onClick={close} disabled={mutation.isPending}>Cancel</Button>
+              <Button type="submit" disabled={mutation.isPending}>
+                {mutation.isPending ? <Loader size="sm" color="white" /> : "Save"}
+                </Button>
             </div>
           </Stack>
         </form>

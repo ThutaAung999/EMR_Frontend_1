@@ -5,8 +5,6 @@ import { IDisease } from "../model/IDisease";
 export function useDeleteDisease() {
     const queryClient = useQueryClient();
    
-    
-
     return useMutation({
       
       mutationFn: async (diseaseId: string) => {
@@ -18,7 +16,7 @@ export function useDeleteDisease() {
           
           //`http://localhost:9999/api/diseases/${diseaseId}`,
           //`https://emr-backend-intz.onrender.com/api/diseases/${diseaseId}`,
-          apiUrl+`api/diseases/'${diseaseId}`,
+          apiUrl+`api/diseases/${diseaseId}`,
           {
             method: "DELETE",
           }

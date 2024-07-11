@@ -1,21 +1,21 @@
 import React from "react";
 
-import { NavItem } from "../constants/nav-items";
-import Dashboard from "../components/dashboard";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
-import PatientList from "../features/patients/components/PatientList";
-import DiseaseList from "../features/diseases/components/DiseaseList";
-import MedicineList from "../features/medicine/components/MedicineList";
-import { EmrList } from "../features/emrs/components/EmrList";
+import { NavItem } from "../../constants/nav-items";
+import Dashboard from "../dashboard";
+import Header from "../Header";
+import Footer from "../Footer";
+import PatientList from "../../features/patients/components/PatientList";
+import DiseaseList from "../../features/diseases/components/DiseaseList";
+import MedicineList from "../../features/medicine/components/MedicineList";
+import { EmrList } from "../../features/emrs/components/EmrList";
 import { Route, Routes } from "react-router-dom";
-import TagList from "../features/tags/components/TagList";
-import CreatePatient from "../features/patients/components/CreatePatient";
-import CreateEmr from "../features/emrs/routes/CreateEmr";
+import TagList from "../../features/tags/components/TagList";
+import CreatePatient from "../../features/patients/components/CreatePatient";
+import CreateEmr from "../../features/emrs/routes/CreateEmr";
 
-import Signup from "../features/auth/routes/Signup";
-import Login from "../features/auth/routes/Login";
-import ProtectedRoute from "../features/auth/providers/ProtectRoute";
+import Signup from "../../features/auth/routes/Signup";
+import Login from "../../features/auth/routes/Login";
+import ProtectedRoute from "../../features/auth/providers/ProtectRoute";
 
 const Main: React.FC<{ activeNavIndex: number; navItems: NavItem[] }> = () => {
   return (

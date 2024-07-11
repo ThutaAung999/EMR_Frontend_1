@@ -8,6 +8,7 @@ import {
   Stack,
   NumberInput,
   Modal,
+  Loader
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useCreatePatient } from "../api/create-patient";
@@ -36,6 +37,7 @@ const CreatePatient: React.FC = () => {
     reset();
   });
 
+  
   const {
     data: diseases,
     error: diseaseError,
@@ -150,8 +152,10 @@ const CreatePatient: React.FC = () => {
             />
 
             <div className="flex flex-row gap-6 justify-end">
-              <Button onClick={close}>Cancel</Button>
-              <Button type="submit">Save</Button>
+              <Button onClick={close} disabled={mutation.isPending}>Cancel</Button>
+              <Button type="submit" disabled={mutation.isPending}>
+              {mutation.isPending? <Loader size="sm" color="white" /> : "Save"}
+              </Button>
             </div>
           </Stack>
         </form>

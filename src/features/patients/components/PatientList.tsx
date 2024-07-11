@@ -3,13 +3,13 @@ import useGetPatients from "../api/get-all-patients";
 import { Button, Table, TextInput } from "@mantine/core";
 import { usePagination } from "@mantine/hooks";
 import { useDeletePatient } from "../api/delete-patients";
-import { ConfirmDialog } from "../../../reusable-components/ConfirmDialog";
+import { ConfirmDialog } from "../../../components/reusable-components/ConfirmDialog";
 import CreatePatient from "./CreatePatient";
 
 import { IPatient } from "../model/IPatient";
 import { IconEdit, IconSearch, IconTrash } from "@tabler/icons-react";
 import UpdatePatient from "./UpdatePatient";
-import Pagination from "../../../reusable-components/Pagination";
+import Pagination from "../../../components/reusable-components/Pagination";
 
 export const PatientList: React.FC = () => {
   const { data, error, isLoading } = useGetPatients();

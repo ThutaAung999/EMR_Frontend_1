@@ -2,19 +2,18 @@ import React, { useState } from "react";
 import { Button, Table, TextInput } from "@mantine/core";
 import { usePagination } from "@mantine/hooks";
 import { useDeleteEmr } from "../api/delete-emr";
-import { ConfirmDialog } from "../../../reusable-components/ConfirmDialog";
+import { ConfirmDialog } from "../../../components/reusable-components/ConfirmDialog";
 import { NavLink } from "react-router-dom";
 
 import { IEmr, IEmrDTO } from "../model/emr.model"; // Import IEmrDTO
 import { IconEdit, IconSearch, IconTrash } from "@tabler/icons-react";
-import Pagination from "../../../reusable-components/Pagination";
-
+import Pagination from "../../../components/reusable-components/Pagination";
 
 import useGetEmrs from "../api/get-all-emrs";
-
 import UpdateEmr from "../routes/UpdateEmr";
 
 import { GiMedicalPack } from "react-icons/gi";
+
 
 export const EmrList: React.FC = () => {
   
@@ -109,11 +108,6 @@ export const EmrList: React.FC = () => {
 
   const rows =
     currentData?.map((emr) => { 
-      /* const emrDiseases = mapIdsToDiseases(
-        (emr.diseases ?? []).map((d) => d._id),
-        diseases || []
-      ); */
-
       const emrDiseases = emr.diseases ??[];
       const emrMedicines = emr.medicines || [];
       const emrPatients = emr.patients || [];

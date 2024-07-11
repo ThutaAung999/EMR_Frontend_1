@@ -1,11 +1,10 @@
 import React from "react";
 import { useForm, Controller } from "react-hook-form";
-import { Button, TextInput, Stack, Modal } from "@mantine/core";
+import { Button, TextInput, Stack, Modal, Loader } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useCreateTag } from "../api/create-tag";
 import { ITagDTO } from "../model/ITag";
 import { AiOutlineTag } from "react-icons/ai";
-
 
 export const CreateTag: React.FC = () => {
   const {
@@ -38,7 +37,7 @@ export const CreateTag: React.FC = () => {
       },
     });
   };
-  
+
   const [opened, { open, close }] = useDisclosure(false);
 
   return (
@@ -60,16 +59,23 @@ export const CreateTag: React.FC = () => {
               )}
             />
             <div className="flex flex-row gap-6 justify-end">
-              <Button onClick={close}>Cancel</Button>
-              <Button type="submit">Save</Button>
+              <Button onClick={close} disabled={mutation.isPending}>
+                Cancel
+              </Button>
+              <Button type="submit" disabled={mutation.isPending}>
+                {mutation.isPending ? (
+                  <Loader size="sm" color="white" />
+                ) : (
+                  "Save"
+                )}
+              </Button>
             </div>
           </Stack>
         </form>
       </Modal>
 
-
       <Stack align="center">
-        <Button onClick={open} leftIcon={< AiOutlineTag size={18} />}>
+        <Button onClick={open} leftIcon={<AiOutlineTag size={18} />}>
           New Tag
         </Button>
       </Stack>

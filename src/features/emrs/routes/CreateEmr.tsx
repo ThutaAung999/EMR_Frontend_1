@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { Button, MultiSelect, Stack, Textarea, Modal } from "@mantine/core";
+import { Button, MultiSelect, Stack, Textarea, Modal , Loader} from "@mantine/core";
 import { Controller, useForm } from "react-hook-form";
 import { IEmrDTO, EmrImage } from "../model/emr.model";
 import { useCreateEmr } from "../api/create-emr";
@@ -66,6 +66,9 @@ const CreateEmr: React.FC = () => {
     }
     navigate("/emrs"); // Navigate to the desired route after saving
   });
+
+
+  
 
   const [uploadedImages, setUploadedImages] = useState<EmrImage[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
@@ -290,8 +293,10 @@ const CreateEmr: React.FC = () => {
             />
 
             <div className="flex flex-row gap-6 justify-end">
-              <Button onClick={() => navigate("/emrs")}>Cancel</Button>
-              <Button type="submit">Save</Button>
+              <Button onClick={() => navigate("/emrs")} disabled={mutation.isPending}>Cancel</Button>
+              <Button type="submit" disabled={mutation.isPending}>
+                {mutation.isPending ? <Loader  size="sm"  color="white" />: "Save"}
+                </Button>
             </div>
           </Stack>
         </form>
@@ -333,8 +338,10 @@ const CreateEmr: React.FC = () => {
             /*     styles={dropdownStyles} */
           />
           <div className="flex flex-row gap-6 justify-end mt-4">
-            <Button onClick={() => setModalOpen(false)}>Cancel</Button>
-            <Button onClick={handleImageUpload}>Save</Button>
+            <Button onClick={() => setModalOpen(false)} disabled={mutation.isPending}>Cancel</Button>
+            <Button onClick={handleImageUpload} disabled={mutation.isPending}>
+              {mutation.isPending ? <Loader size="sm" color="white"/> :"Save"}
+              </Button>
           </div>
         </Stack>
       </Modal>

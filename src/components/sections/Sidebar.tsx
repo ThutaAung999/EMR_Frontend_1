@@ -5,10 +5,8 @@ import { GiPillDrop, GiMedicalPack, GiVirus } from "react-icons/gi";
 import { FaArrowRight, FaUserFriends } from "react-icons/fa";
 import { AiOutlineTag } from "react-icons/ai";
 import { NavLink, useLocation } from "react-router-dom";
-import { NavItem } from "../constants/nav-items";
+import { NavItem } from "../../constants/nav-items";
 import { useNavigate } from "react-router-dom";
-
-
 
 const variants = {
   expanded: { width: "15%" },

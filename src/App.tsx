@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import Sidebar from "./sections/Sidebar";
-import Main from "./sections/Main";
+import Sidebar from "./components/sections/Sidebar";
+import Main from "./components/sections/Main";
 
 import { NAV_ITEMS } from "./constants/nav-items";
 
