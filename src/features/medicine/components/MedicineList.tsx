@@ -9,14 +9,14 @@ import { IMedicine } from "../model/IMedicine";
 import { IconEdit, IconSearch, IconTrash } from "@tabler/icons-react";
 import UpdateMedicine from "./UpdateMedicine";
 import Pagination from "../../../reusable-components/Pagination";
-import { useGetDiseases } from "../../diseases/api/get-all-diseases";
+
 import CreateMedicine from "./CreateMedicine";
 
 export const MedicineList: React.FC = () => {
   const { data, error, isLoading } = useGetMedicines();
   const mutationDelete = useDeleteMedicine();
 
-  const { data: diseases, error: diseasesError, isLoading: diseasesLoading } = useGetDiseases();
+
 
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [selectedMedicineId, setSelectedMedicineId] = useState<string | null>(null);
@@ -32,9 +32,9 @@ export const MedicineList: React.FC = () => {
     initialPage: 1,
   });
 
-  if (isLoading || diseasesLoading) return <div>Loading...</div>;
+  if (isLoading ) return <div>Loading...</div>;
   if (error) return <div>An error occurred: {error.message}</div>;
-  if (diseasesError) return <div>An error occurred while fetching diseases: {diseasesError.message}</div>;
+  
 
   const filterMedicines = (medicines: IMedicine[]) => {
     return medicines.filter((medicine) => {

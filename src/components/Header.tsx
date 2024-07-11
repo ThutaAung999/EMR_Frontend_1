@@ -1,8 +1,10 @@
 import React  from 'react';
 import { IoSearch } from "react-icons/io5";
-import { IoIosArrowDown } from "react-icons/io";
+
+/* import { IoIosArrowDown } from "react-icons/io";
 import client from "../assets/images/client.jpg";
-import useAuth from '../features/auth/providers/useAuth';
+ */
+//import useAuth from '../features/auth/providers/useAuth';
 
 //-------------------------
 
@@ -13,7 +15,7 @@ import useAuth from '../features/auth/providers/useAuth';
 
 const Header: React.FC = () => {
 
-  const { auth } = useAuth();
+//  const { auth } = useAuth();
 
 
     return (

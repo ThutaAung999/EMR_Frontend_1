@@ -5,20 +5,16 @@ import { usePagination } from "@mantine/hooks";
 import { useDeletePatient } from "../api/delete-patients";
 import { ConfirmDialog } from "../../../reusable-components/ConfirmDialog";
 import CreatePatient from "./CreatePatient";
-//import { mapIdsToDiseases, mapIdsToDoctors } from "./util";
+
 import { IPatient } from "../model/IPatient";
 import { IconEdit, IconSearch, IconTrash } from "@tabler/icons-react";
 import UpdatePatient from "./UpdatePatient";
 import Pagination from "../../../reusable-components/Pagination";
-import { useGetDiseases } from "../../diseases/api/get-all-diseases";
-import { useGetDoctors } from "../../doctors/api/get-all-doctors";
 
 export const PatientList: React.FC = () => {
   const { data, error, isLoading } = useGetPatients();
   const mutationDelete = useDeletePatient();
 
-  const { data: diseases, error: diseasesError, isLoading: diseasesLoading } = useGetDiseases();
-  const { data: doctors, error: doctorsError, isLoading: doctorsLoading } = useGetDoctors();
 
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [selectedPatientId, setSelectedPatientId] = useState<string | null>(null);
@@ -34,11 +30,9 @@ export const PatientList: React.FC = () => {
     initialPage: 1,
   });
 
-  if (isLoading || diseasesLoading || doctorsLoading) return <div>Loading...</div>;
+  if (isLoading ) return <div>Loading...</div>;
   if (error) return <div>An error occurred: {error.message}</div>;
-  if (diseasesError) return <div>An error occurred while fetching diseases: {diseasesError.message}</div>;
-  if (doctorsError) return <div>An error occurred while fetching doctors: {doctorsError.message}</div>;
-
+ 
   const filterPatients = (patients: IPatient[]) => {
     return patients.filter((patient) => {
 

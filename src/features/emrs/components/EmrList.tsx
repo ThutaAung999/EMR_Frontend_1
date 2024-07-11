@@ -9,32 +9,18 @@ import { IEmr, IEmrDTO } from "../model/emr.model"; // Import IEmrDTO
 import { IconEdit, IconSearch, IconTrash } from "@tabler/icons-react";
 import Pagination from "../../../reusable-components/Pagination";
 
-import { useGetDiseases } from "../../diseases/api/get-all-diseases";
+
 import useGetEmrs from "../api/get-all-emrs";
-import { useGetMedicines } from "../../medicine/api/get-all-medicines";
-import useGetPatients from "../../patients/api/get-all-patients";
+
 import UpdateEmr from "../routes/UpdateEmr";
 
 import { GiMedicalPack } from "react-icons/gi";
 
 export const EmrList: React.FC = () => {
+  
   const { data, error, isLoading } = useGetEmrs();
-  const {
-    data: diseases,
-    error: diseasesError,
-    isLoading: diseasesLoading,
-  } = useGetDiseases();
-  const {
-    data: medicines,
-    error: medicinesError,
-    isLoading: medicinesLoading,
-  } = useGetMedicines();
-  const {
-    data: patients,
-    error: patientsError,
-    isLoading: patientsLoading,
-  } = useGetPatients();
-
+  
+  
   const mutationDelete = useDeleteEmr();
 
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -53,13 +39,16 @@ export const EmrList: React.FC = () => {
     initialPage: 1,
   });
 
-  if (isLoading || diseasesLoading || patientsLoading || medicinesLoading)
-    return <div>Loading...</div>;
-  if (error || diseasesError || patientsError || medicinesError)
-    return <div>Error occurred </div>;
+  if (error) {
+    return <p>Error fetching emr data: {error.message}</p>;
+  }
+  if(isLoading) {
+    return <p>Loading...</p>;
+  }
 
   const filterEmrs = (emrs: IEmr[]) => {
     return emrs.filter((emr) => {
+      
       const emrDiseases = emr.diseases ?? [];
       const emrMedicines = emr.medicines ?? [];
       const emrPatients = emr.patients ?? [];
