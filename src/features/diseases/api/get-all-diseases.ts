@@ -45,10 +45,6 @@ export const useGetDiseases = () => {
 //------------------------------------------------------------------------------------------------
 //After update
 
-/* import { useQuery, UseQueryOptions } from "@tanstack/react-query";
-import { IDisease } from "../model/IDisease";
- */
-
 export interface GetDiseasesQuery {
   page: number;
   limit: number;
