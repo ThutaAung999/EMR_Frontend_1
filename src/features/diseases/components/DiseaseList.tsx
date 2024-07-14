@@ -1,7 +1,5 @@
-
 import React, { useState, useCallback, useEffect } from "react";
-import {  FiChevronUp, FiChevronDown, FiChevronRight } from "react-icons/fi";
-
+import { FiChevronUp, FiChevronDown, FiChevronRight } from "react-icons/fi";
 import { useGetDiseases1 } from "../api/get-all-diseases";
 import { useDeleteDisease } from "../api/delete-disease";
 import { IDisease } from "../model/IDisease";
@@ -11,9 +9,8 @@ import { ConfirmDialog } from "../../../components/reusable-components/ConfirmDi
 import { CreateDisease } from "./CreateDisease";
 import UpdateDisease from "./UpdateDisease";
 import Pagination1 from "../../../components/reusable-components/Patination1";
-import SearchInput from "./SearchInput"; 
+import SearchInput from "./SearchInput";
 import useDebounce from "../hooks/debounce.hook";
-
 
 const DiseaseList: React.FC = () => {
   const [page, setPage] = useState(1);
@@ -24,7 +21,7 @@ const DiseaseList: React.FC = () => {
 
   const [searchLoading, setSearchLoading] = useState(false);
 
-  const debouncedSearchQuery = useDebounce(searchQuery, 500); 
+  const debouncedSearchQuery = useDebounce(searchQuery, 500);
 
   const query = { page, limit, search: debouncedSearchQuery, sortBy, sortOrder };
   const { data, error, isLoading, refetch } = useGetDiseases1(query);
@@ -45,7 +42,7 @@ const DiseaseList: React.FC = () => {
     if (selectedDiseaseId) {
       mutationDelete.mutate(selectedDiseaseId, {
         onSuccess: () => {
-          setPage(1); 
+          setPage(1);
         },
       });
     }
@@ -69,17 +66,17 @@ const DiseaseList: React.FC = () => {
 
   const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
-    setPage(1); 
-    setSearchLoading(true); 
+    setPage(1);
+    setSearchLoading(true);
   }, []);
 
   useEffect(() => {
     if (debouncedSearchQuery) {
-      refetch().then(() => setSearchLoading(false)); 
+      refetch().then(() => setSearchLoading(false));
     }
   }, [debouncedSearchQuery, refetch]);
 
-  if (isLoading && !searchLoading) return <div>Loading...</div>; 
+  if (isLoading && !searchLoading) return <div>Loading...</div>;
   if (error) return <div>Error</div>;
 
   const getSortIcon = (column: string) => {
@@ -104,8 +101,12 @@ const DiseaseList: React.FC = () => {
         <Table striped highlightOnHover verticalSpacing="md" className="bg-white shadow-sm rounded-lg">
           <thead className="bg-gray-200">
             <tr>
-              <th className="py-2 px-4 cursor-pointer" onClick={() => handleSort('name')}><span className="flex">Name {getSortIcon('name')}</span></th>
-              <th className="py-2 px-4 cursor-pointer" onClick={() => handleSort('description')}> <span className="flex">Description{getSortIcon('description')}</span></th>
+              <th className="py-2 px-4 cursor-pointer" onClick={() => handleSort('name')}>
+                <span className="flex">Name {getSortIcon('name')}</span>
+              </th>
+              <th className="py-2 px-4 cursor-pointer" onClick={() => handleSort('description')}>
+                <span className="flex">Description {getSortIcon('description')}</span>
+              </th>
               <th className="py-2 px-4">Action</th>
             </tr>
           </thead>
@@ -127,7 +128,10 @@ const DiseaseList: React.FC = () => {
           </tbody>
         </Table>
 
-        <div className="flex justify-end mt-4">
+        <div className="flex justify-between items-center mt-4">
+          <div>
+            Page {page} of {data?.totalPages}
+          </div>
           <Pagination1 total={data?.totalPages || 1} page={page} onChange={setPage} />
         </div>
 
@@ -141,5 +145,3 @@ const DiseaseList: React.FC = () => {
 };
 
 export default DiseaseList;
-
-
