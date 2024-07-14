@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import { useForm, Controller } from "react-hook-form";
-import { Button, TextInput, Stack, Modal } from "@mantine/core";
+import { Button, TextInput, Stack, Modal, Loader } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useCreateDisease } from "../api/create-disease";
 import { IDiseaseDTO } from "../model/IDisease";
-
 import { GiVirus } from "react-icons/gi";
 
 export const CreateDisease: React.FC = () => {
@@ -17,24 +16,18 @@ export const CreateDisease: React.FC = () => {
     defaultValues: {
       name: "",
       description: "",
-      //patients: [],
-      // medicines: [],
     },
   });
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
   const mutation = useCreateDisease(() => {
-    setIsSubmitting(false);
     close();
     reset();
   });
 
   const onSubmit = (data: IDiseaseDTO) => {
-    setIsSubmitting(true);
     mutation.mutate(data, {
       onError: () => {
-        setIsSubmitting(false);
+        alert("Failed to create disease");
       },
     });
   };
@@ -69,14 +62,16 @@ export const CreateDisease: React.FC = () => {
                   label="Description"
                   placeholder="Enter description"
                   {...field}
-                  error={errors.name?.message}
+                  error={errors.description?.message}
                 />
               )}
             />
 
             <div className="flex flex-row gap-6 justify-end">
-              <Button onClick={close}>Cancel</Button>
-              <Button type="submit" disabled={isSubmitting}>Save</Button>
+              <Button onClick={close} disabled={mutation.isPending}>Cancel</Button>
+              <Button type="submit" disabled={mutation.isPending}>
+                {mutation.isPending ? <Loader size="sm" color="white" /> : "Save"}
+              </Button>
             </div>
           </Stack>
         </form>
@@ -90,5 +85,3 @@ export const CreateDisease: React.FC = () => {
     </>
   );
 };
-
-//export default CreateDisease;
