@@ -1,6 +1,6 @@
 import React from "react";
 import { useForm, Controller } from "react-hook-form";
-import { Button, TextInput, Stack, Modal, Loader, Transition, Transaction } from '@mantine/core';
+import { Button, TextInput, Stack, Modal, Loader } from '@mantine/core';
 import { useDisclosure } from "@mantine/hooks";
 import { useCreateDisease } from "../api/create-disease";
 import { IDiseaseDTO } from "../model/IDisease";
