@@ -1,10 +1,12 @@
 import React from "react";
 import { useForm, Controller } from "react-hook-form";
-import { Button, TextInput, Stack, Modal, Loader } from "@mantine/core";
+import { Button, TextInput, Stack, Modal, Loader, Transition, Transaction } from '@mantine/core';
 import { useDisclosure } from "@mantine/hooks";
 import { useCreateDisease } from "../api/create-disease";
 import { IDiseaseDTO } from "../model/IDisease";
 import { GiVirus } from "react-icons/gi";
+import { notifications } from "@mantine/notifications";
+import { IconUpload } from "@tabler/icons-react";
 
 export const CreateDisease: React.FC = () => {
   const {
@@ -24,8 +26,24 @@ export const CreateDisease: React.FC = () => {
     reset();
   });
 
+
   const onSubmit = (data: IDiseaseDTO) => {
     mutation.mutate(data, {
+      onSuccess: (data: IDiseaseDTO) =>{
+
+        console.log('Successfully saved', data.name, data.description);
+        
+        notifications.show({            
+          title: 'Success',
+          message: 'Disease saved successfully',
+          color: 'green',
+          autoClose: 3000,
+          icon: <IconUpload size={20} />,                        
+          withCloseButton: true,
+          
+        })
+      } ,
+
       onError: () => {
         alert("Failed to create disease");
       },

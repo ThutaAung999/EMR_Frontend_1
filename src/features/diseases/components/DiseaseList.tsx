@@ -3,7 +3,7 @@ import { FiChevronUp, FiChevronDown, FiChevronRight } from "react-icons/fi";
 import { useGetDiseases1 } from "../api/get-all-diseases";
 import { useDeleteDisease } from "../api/delete-disease";
 import { IDisease } from "../model/IDisease";
-import { Button, Table } from "@mantine/core";
+import { Button,  Table } from "@mantine/core";
 import { IconEdit, IconTrash } from "@tabler/icons-react";
 import { ConfirmDialog } from "../../../components/reusable-components/ConfirmDialog";
 import { CreateDisease } from "./CreateDisease";
@@ -11,6 +11,10 @@ import UpdateDisease from "./UpdateDisease";
 import Pagination1 from "../../../components/reusable-components/Patination1";
 import SearchInput from "./SearchInput";
 import useDebounce from "../hooks/debounce.hook";
+
+
+import { notifications } from '@mantine/notifications';
+
 
 const DiseaseList: React.FC = () => {
   const [page, setPage] = useState(1);
@@ -43,6 +47,19 @@ const DiseaseList: React.FC = () => {
       mutationDelete.mutate(selectedDiseaseId, {
         onSuccess: () => {
           setPage(1);
+          
+          notifications.show({            
+            title: 'Success',
+            message: 'Disease deleted successfully',
+            color: 'green',
+            autoClose: 3000,
+            icon: <IconTrash size={20} />,                        
+          })
+        
+        },
+
+        onError: (error) => {
+          console.log('Error deleting :',error)        
         },
       });
     }

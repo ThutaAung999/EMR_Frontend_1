@@ -6,7 +6,7 @@ const fetchDiseaseById = async (id: string): Promise<IDisease> => {
   
   const apiUrl = import.meta.env.VITE_API_URL;  
   //const response = await fetch(`http://localhost:9999/api/diseases/${id}`);
-  const response = await fetch(apiUrl+`sdiseases/${id}`);
+  const response = await fetch(apiUrl+`diseases/${id}`);
   
   if (!response.ok) {
     const errorData = await response.json();

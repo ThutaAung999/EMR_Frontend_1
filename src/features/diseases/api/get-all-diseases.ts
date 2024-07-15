@@ -1,4 +1,4 @@
-//Before update
+//Before updating
 
 import { useQuery, UseQueryOptions } from "@tanstack/react-query";
 import { IDisease } from "../model/IDisease";
@@ -42,8 +42,9 @@ export const useGetDiseases = () => {
 
  
 
-//------------------------------------------------------------------------------------------------
-//After update
+//--------------------------------------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------------------------------------
+//After updating
 
 export interface GetDiseasesQuery {
   page: number;
@@ -54,8 +55,7 @@ export interface GetDiseasesQuery {
   noLimit?: boolean;
 }
 
-const fetchDiseases1 = async (query: GetDiseasesQuery): Promise<{ data: IDisease[]; total: number; page: number; totalPages: number }> => {
-  
+const fetchDiseases1 = async (query: GetDiseasesQuery): Promise<{ data: IDisease[]; total: number; page: number; totalPages: number }> => {  
   
   const params = new URLSearchParams(query as any).toString();
   
@@ -88,6 +88,5 @@ export const useGetDiseases1 = (query: GetDiseasesQuery) => {
 };
 
 
-
-
-//-----------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

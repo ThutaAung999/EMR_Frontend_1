@@ -167,7 +167,9 @@ export function useCreateDisease(onSuccessCallback?: () => void) {
         throw new Error("All fields are required and must be in the correct format.");
       }
 
-      const response = await fetch('http://localhost:9999/api/diseases', {
+      const apiUrl = import.meta.env.VITE_API_URL;  
+      const response = await fetch(apiUrl+'api/diseases', {
+      //const response = await fetch('http://localhost:9999/api/diseases', {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',

@@ -47,14 +47,16 @@ export function useDeleteDisease() {
     const queryClient = useQueryClient();
    
     return useMutation({
-      
-      mutationFn: async (diseaseId: string) => {
 
+
+
+      mutationFn: async (diseaseId: string) => {
+        const apiUrl = import.meta.env.VITE_API_URL;
   
         const response = await fetch(
 
-          
-          `http://localhost:9999/api/diseases/${diseaseId}`,
+          apiUrl+`api/diseases/${diseaseId}`,
+         // `http://localhost:9999/api/diseases/${diseaseId}`,
           {
             method: "DELETE",
           }

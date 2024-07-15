@@ -4,6 +4,8 @@ import { Button, TextInput, Stack, Modal } from "@mantine/core";
 
 import { useUpdateDisease } from "../api/update-disease";
 import { IDisease } from "../model/IDisease";
+import { notifications } from "@mantine/notifications";
+import { FaCheck } from "react-icons/fa";
 
 interface UpdateDiseaseProps {
   disease: IDisease;
@@ -31,8 +33,31 @@ const UpdateDisease: React.FC<UpdateDiseaseProps> = ({
     const transformedData = {
       ...data,
     };
-    mutation.mutate(transformedData);
-    closeModal();
+    mutation.mutate(transformedData,{
+      
+      onSuccess: () => {
+
+        closeModal();
+        console.log("Disease updated successfully");
+        
+        notifications.show({            
+          title: 'Success',
+          message: 'Disease updated successfully',
+          color: 'green',
+          autoClose: 3000,
+          icon: <FaCheck size={20} />,                        
+          withCloseButton: true,
+          
+        })
+      } ,
+	onError: (error) => {
+      closeModal();
+        console.error("Failed to update disease", error);
+      },
+      
+    });
+    
+    
   };
 
   useEffect(() => {
