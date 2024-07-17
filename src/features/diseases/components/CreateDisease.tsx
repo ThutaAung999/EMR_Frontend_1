@@ -8,7 +8,7 @@ import { GiVirus } from "react-icons/gi";
 import { notifications } from "@mantine/notifications";
 import { IconUpload } from "@tabler/icons-react";
 
-export const CreateDisease: React.FC = () => {
+const CreateDisease: React.FC = () => {
   const {
     control,
     handleSubmit,
@@ -29,6 +29,7 @@ export const CreateDisease: React.FC = () => {
 
   const onSubmit = (data: IDiseaseDTO) => {
     mutation.mutate(data, {
+
       onSuccess: (data: IDiseaseDTO) =>{
 
         console.log('Successfully saved', data.name, data.description);
@@ -46,6 +47,15 @@ export const CreateDisease: React.FC = () => {
 
       onError: () => {
         alert("Failed to create disease");
+        notifications.show({            
+          title: 'Fail',
+          message: 'Disease not saved successfully',
+          color: 'red',
+          autoClose: 3000,
+          icon: <IconUpload size={20} />,                        
+          withCloseButton: true,
+          
+        })
       },
     });
   };
@@ -103,3 +113,5 @@ export const CreateDisease: React.FC = () => {
     </>
   );
 };
+
+export default CreateDisease;

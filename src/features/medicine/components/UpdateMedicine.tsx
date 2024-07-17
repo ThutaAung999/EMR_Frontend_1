@@ -1,44 +1,64 @@
-// components/UpdatePatient.tsx
+
 import React, { useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Button, TextInput, MultiSelect, Stack, Modal } from "@mantine/core";
 
 import { useUpdateMedicine } from "../api/update-medicine";
-import { IMedicine } from "../model/IMedicine";
-import { useGetDiseases } from "../../../features/diseases/api/get-all-diseases";
+import { IMedicine, IMedicineDTO } from "../model/IMedicine";
+import { useGetDiseases1, GetDiseasesQuery } from "../../../features/diseases/api/get-all-diseases";
+import { IDisease } from "../../diseases/model/IDisease";
 
 interface UpdateMedicineProps {
   medicine: IMedicine;
   closeModal: () => void;
 }
 
-const UpdateMedicine: React.FC<UpdateMedicineProps> = ({medicine,closeModal,}) => {
-
-  console.log("medicine to update :",medicine)
-  const {control,handleSubmit,formState: { errors },reset,} = useForm<IMedicine>({
+const UpdateMedicine: React.FC<UpdateMedicineProps> = ({ medicine, closeModal }) => {
+  const { control, handleSubmit, formState: { errors }, reset } = useForm<IMedicineDTO>({
     defaultValues: {
       ...medicine,
-      diseases: medicine.diseases?.map((disease) => ({ _id: disease._id })),
+      diseases: medicine.diseases?.map((disease) => disease._id) || [],
     },
   });
 
-
+  console.log("medicine: "+medicine.diseases.map((disease) =>disease.name) + "\n");
+ 
   const mutation = useUpdateMedicine();
-  const { data: diseasesData } = useGetDiseases();
 
-  const onSubmit = (data: IMedicine) => {
-    const transformedData = {
-      ...data,
-      diseases: data.diseases.map((disease) => disease._id),
-    };
-
-    mutation.mutate(transformedData as any);
-    closeModal();
+  const defaultQuery: GetDiseasesQuery = {
+    page: 1,
+    limit: 50,
   };
 
+  const { data: diseasesData } = useGetDiseases1(defaultQuery);
+
+
+  const onSubmit = (data: IMedicineDTO) => {
+    const transformedData: IMedicineDTO = {
+      ...data,
+      diseases: data.diseases, 
+    };
+
+    mutation.mutate(transformedData);
+    closeModal();
+  }; 
+
+
   useEffect(() => {
-    reset(medicine);
+    reset({
+      ...medicine,
+      diseases: medicine.diseases?.map((disease) => disease._id) || [],
+    });
   }, [medicine, reset]);
+
+
+
+  const diseaseOptions = diseasesData?.data.map((disease:IDisease) => ({
+    value: disease._id,
+    label: disease.name,
+  })) || [];
+
+  console.log("diseaseOptions :",diseaseOptions);
 
   return (
     <Modal opened={true} onClose={closeModal} title="Edit Medicine">
@@ -61,34 +81,27 @@ const UpdateMedicine: React.FC<UpdateMedicineProps> = ({medicine,closeModal,}) =
           <Controller
             name="manufacturer"
             control={control}
-            rules={{ required: "manufacturer is required" }}
+            rules={{ required: "Manufacturer is required" }}
             render={({ field }) => (
               <TextInput
                 label="Manufacturer"
                 placeholder="Enter manufacturer name"
                 {...field}
-                error={errors.name?.message}
+                error={errors.manufacturer?.message}
               />
             )}
           />
 
-          <Controller
+<Controller
             name="diseases"
             control={control}
             render={({ field }) => (
               <MultiSelect
-                data={
-                  diseasesData?.map((disease) => ({
-                    value: disease._id,
-                    label: disease.name,
-                  })) || []
-                }
                 label="Diseases"
                 placeholder="Select diseases"
-                value={field.value.map((disease: any) => disease._id)}
-                onChange={(values) =>
-                  field.onChange(values.map((id) => ({ _id: id })))
-                }
+                data={diseaseOptions}
+                value={field.value}
+                onChange={(values) => field.onChange(values)}
                 error={errors.diseases && "Please select at least one disease"}
               />
             )}

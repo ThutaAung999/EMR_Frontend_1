@@ -1,19 +1,18 @@
+
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { IMedicine } from "../model/IMedicine";
+import { IMedicineDTO } from "../model/IMedicine";
 
 export function useUpdateMedicine() {
   const queryClient = useQueryClient();
 
   const updateMedicine = useMutation({
     
-    mutationFn: async (updatedMedicine: IMedicine) => {
-      const apiUrl = import.meta.env.VITE_API_URL;  
+    mutationFn: async (updatedMedicine: IMedicineDTO) => {
       
-      //const response = await fetch(`http://localhost:9999/api/medicines/${updatedMedicine._id}`, {      
-      /* const response = await fetch(`https://emr-backend-intz.onrender.com
-          /api/medicines/${updatedMedicine._id}`, {
- */
-      const response = await fetch(apiUrl+`api/medicines/${updatedMedicine._id}`, {
+      //const response = await fetch(`https://emr-backend-intz.onrender.com/api/medicines/${updatedMedicine._id}`, {
+      //const apiUrl = import.meta.env.VITE_API_URL;  
+      //const response = await fetch(apiUrl+`api/medicines/${updatedMedicine._id}`, {
+        const response = await fetch(`http://localhost:9999/api/medicines/${updatedMedicine._id}`, {      
         method: "PATCH", // or "PUT" if you prefer full update
         headers: {
           'Content-Type': 'application/json',
@@ -35,4 +34,5 @@ export function useUpdateMedicine() {
 
   return updateMedicine;
 }
+
 

@@ -1,10 +1,12 @@
+
+
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Button, Modal, MultiSelect, Stack, TextInput,Loader } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useCreateMedicine } from "../api/create-medicine";
 import { IMedicineDTO } from "../model/IMedicine";
-import { useGetDiseases } from "../../diseases/api/get-all-diseases";
+import { useGetDiseases1,GetDiseasesQuery } from "../../diseases/api/get-all-diseases";
 import { GiPillDrop } from "react-icons/gi";
 
 const CreateMedicine: React.FC = () => {
@@ -26,27 +28,42 @@ const CreateMedicine: React.FC = () => {
     reset();
   });
 
+
   const onSubmit = (data: IMedicineDTO) => {
     mutation.mutate(data);
   };
 
+
+  /* const onSubmit = (data: IMedicineDTO) => {
+    const transformedMedicine: IMedicineDTO = {
+      ...data,
+      diseases: data.diseases,
+    };
+    mutation.mutate(transformedMedicine);
+  };
+  
+ */
   const [opened, { open, close }] = useDisclosure(false);
 
+  const defaultQuery: GetDiseasesQuery = {
+    page: 1,
+    limit: 100, 
+  };
+  
   const { data: diseases, error: diseaseError, isLoading: diseaseIsLoading } =
-    useGetDiseases();
+  useGetDiseases1(defaultQuery);
+
 
   if (diseaseIsLoading) return <div>Loading...</div>;
   if (diseaseError) return <div>Error</div>;
 
-  const diseaseOptions =
-    diseases
-      ?.filter(
-        (disease, index, self) =>
-          disease &&
-          disease._id &&
-          self.findIndex((d) => d?._id === disease._id) === index
-      )
-      .map((disease) => ({ value: disease._id, label: disease.name })) || [];
+
+    const diseaseOptions = diseases?.data?.map((disease) => ({ 
+        value: disease._id, 
+        label: disease.name 
+    })) || [];
+
+    console.log('disease options in CreateMedicine: ', diseaseOptions);
 
   return (
     <>
@@ -91,9 +108,7 @@ const CreateMedicine: React.FC = () => {
                   placeholder="Select diseases"
                   value={field.value}
                   onChange={(values) => field.onChange(values)}
-                  error={
-                    errors.diseases && "Please select at least one disease"
-                  }
+                  error={errors.diseases && "Please select at least one disease"}
                 />
               )}
             />
@@ -118,3 +133,4 @@ const CreateMedicine: React.FC = () => {
 };
 
 export default CreateMedicine;
+

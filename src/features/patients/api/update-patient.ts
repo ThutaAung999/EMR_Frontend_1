@@ -8,12 +8,16 @@ export function useUpdatePatient() {
   const updatePatient = useMutation({
     mutationFn: async (updatedPatient: IPatient) => {
 
-        const apiUrl = import.meta.env.VITE_API_URL;
+        
       
-      //const response = await fetch(`http://localhost:9999/api/patients/${updatedPatient._id}`, {
-
+      const response = await fetch(`http://localhost:9999/api/patients/${updatedPatient._id}`, {
       //const response = await fetch(`https://emr-backend-intz.onrender.com/api/patients/${updatedPatient._id}`, {
-        const response = await fetch(apiUrl+`api/patients/${updatedPatient._id}`, {
+
+      /*
+        const apiUrl = import.meta.env.VITE_API_URL;
+        const response = await fetch(apiUrl+`api/patients/${updatedPatient._id}`, { 
+     */
+
         method: "PATCH", // or "PUT" if you prefer full update
         headers: {
           'Content-Type': 'application/json',

@@ -1,20 +1,17 @@
 import React, { useState, useCallback, useEffect } from "react";
-import { FiChevronUp, FiChevronDown, FiChevronRight } from "react-icons/fi";
 import { useGetDiseases1 } from "../api/get-all-diseases";
 import { useDeleteDisease } from "../api/delete-disease";
 import { IDisease } from "../model/IDisease";
-import { Button,  Table } from "@mantine/core";
+import { Button, Table } from "@mantine/core";
 import { IconEdit, IconTrash } from "@tabler/icons-react";
 import { ConfirmDialog } from "../../../components/reusable-components/ConfirmDialog";
-import { CreateDisease } from "./CreateDisease";
+import CreateDisease from "./CreateDisease";
 import UpdateDisease from "./UpdateDisease";
 import Pagination1 from "../../../components/reusable-components/Patination1";
-import SearchInput from "./SearchInput";
 import useDebounce from "../hooks/debounce.hook";
-
-
+import SearchInput from "./SearchInput";
 import { notifications } from '@mantine/notifications';
-
+import { FiChevronDown, FiChevronRight, FiChevronUp } from "react-icons/fi";
 
 const DiseaseList: React.FC = () => {
   const [page, setPage] = useState(1);
@@ -23,19 +20,20 @@ const DiseaseList: React.FC = () => {
   const [sortBy, setSortBy] = useState<string | undefined>();
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc' | undefined>();
 
-  const [searchLoading, setSearchLoading] = useState(false);
-
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
-
   const query = { page, limit, search: debouncedSearchQuery, sortBy, sortOrder };
-  const { data, error, isLoading, refetch } = useGetDiseases1(query);
 
+  const { data: diseases, error, isLoading, refetch } = useGetDiseases1(query);
   const mutationDelete = useDeleteDisease();
 
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [selectedDiseaseId, setSelectedDiseaseId] = useState<string | null>(null);
   const [selectedDisease, setSelectedDisease] = useState<IDisease | null>(null);
   const [updateModalOpen, setUpdateModalOpen] = useState(false);
+
+
+  const [searchLoading, setSearchLoading] = useState(false);
+
 
   const handleDelete = useCallback((id: string) => {
     setSelectedDiseaseId(id);
@@ -47,19 +45,16 @@ const DiseaseList: React.FC = () => {
       mutationDelete.mutate(selectedDiseaseId, {
         onSuccess: () => {
           setPage(1);
-          
-          notifications.show({            
+          notifications.show({
             title: 'Success',
             message: 'Disease deleted successfully',
             color: 'green',
             autoClose: 3000,
-            icon: <IconTrash size={20} />,                        
-          })
-        
+            icon: <IconTrash size={20} />,
+          });
         },
-
         onError: (error) => {
-          console.log('Error deleting :',error)        
+          console.error('Error deleting disease:', error);
         },
       });
     }
@@ -88,13 +83,14 @@ const DiseaseList: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (debouncedSearchQuery) {
-      refetch().then(() => setSearchLoading(false));
-    }
-  }, [debouncedSearchQuery, refetch]);
+    
+    refetch().then(() => setSearchLoading(false));
 
-  if (isLoading && !searchLoading) return <div>Loading...</div>;
-  if (error) return <div>Error</div>;
+  }, [page, limit, debouncedSearchQuery, sortBy, sortOrder, refetch]);
+
+  if (isLoading &&  !searchLoading) return <div>Loading...</div>; // Show loading state only when page is 1
+
+  if (error) return <div>Error fetching diseases: {error.message}</div>;
 
   const getSortIcon = (column: string) => {
     if (sortBy === column) {
@@ -128,7 +124,7 @@ const DiseaseList: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {data?.data.map((disease) => (
+            {diseases?.data.map((disease) => (
               <tr key={disease._id}>
                 <td className="py-2 px-4">{disease.name}</td>
                 <td className="py-2 px-4">{disease.description}</td>
@@ -147,9 +143,9 @@ const DiseaseList: React.FC = () => {
 
         <div className="flex justify-between items-center mt-4">
           <div>
-            Page {page} of {data?.totalPages}
+            Page {page} of {diseases?.totalPages}
           </div>
-          <Pagination1 total={data?.totalPages || 1} page={page} onChange={setPage} />
+          <Pagination1 total={diseases?.totalPages || 1} page={page} onChange={setPage} />
         </div>
 
         <ConfirmDialog open={confirmOpen} onClose={() => setConfirmOpen(false)} onConfirm={handleConfirmDelete} />

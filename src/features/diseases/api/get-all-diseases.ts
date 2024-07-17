@@ -1,8 +1,9 @@
-//Before updating
+
 
 import { useQuery, UseQueryOptions } from "@tanstack/react-query";
 import { IDisease } from "../model/IDisease";
 
+//Before updating
 // Fetch diseases
 export const fetchDiseases = async (): Promise<IDisease[]> => {
   console.log("fetchDiseases from frontend");
@@ -59,6 +60,10 @@ const fetchDiseases1 = async (query: GetDiseasesQuery): Promise<{ data: IDisease
   
   const params = new URLSearchParams(query as any).toString();
   
+  /* const apiUrl = import.meta.env.VITE_API_URL;  
+
+  const response = await fetch(apiUrl+`api/diseases?${params}`);
+ */
   const response = await fetch(`http://localhost:9999/api/diseases?${params}`);
   
   

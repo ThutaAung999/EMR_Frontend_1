@@ -1,3 +1,4 @@
+
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { IMedicine } from "../model/IMedicine";
 
@@ -14,13 +15,14 @@ export function useCreateMedicine(onSuccessCallback?: () => void) {
       if (!medicine.name || !medicine.manufacturer || !Array.isArray(medicine.diseases) ) {
         throw new Error("All fields are required and must be in the correct format.");
     }
-    console.log('Payload being sent:', medicine); // Log payload
+      
+    //const response = await fetch("https://emr-backend-intz.onrender.com/api/medicines", {
   
-    const apiUrl = import.meta.env.VITE_API_URL;  
-    //const response = await fetch("http://localhost:9999/api/medicines", {
-      //const response = await fetch("https://emr-backend-intz.onrender.com/api/medicines", {
-      const response = await fetch(apiUrl+"api/medicines", {
-
+/*     const apiUrl = import.meta.env.VITE_API_URL;  
+    const response = await fetch(apiUrl+"api/medicines", {
+ */
+                            
+    const response = await fetch(`http://localhost:9999/api/medicines`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -37,16 +39,21 @@ export function useCreateMedicine(onSuccessCallback?: () => void) {
       return response.json();
     },
 
-    onMutate: (newMedicineInfo: IMedicineDTO) => {
+    onMutate: async (newMedicineInfo: IMedicineDTO) => {
+
+      await queryClient.cancelQueries({ queryKey: ['medicines'] });
+
+
+      const previousMedicines = queryClient.getQueryData<IMedicine[]>(['medicine']) ?? [];
+
       queryClient.setQueryData(
-        ["medicines"],
-        (prevMedicines: IMedicine[]) =>
-          [
-            ...prevMedicines,
+        ["medicines"],                
+          [        
             {
               ...newMedicineInfo,
               _id: `temp-id-${Date.now()}`, // temporary ID until server responds
             },
+            ...previousMedicines,
           ] as IMedicine[]
       );
     },
