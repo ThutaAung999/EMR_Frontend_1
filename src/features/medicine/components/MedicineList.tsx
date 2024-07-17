@@ -8,7 +8,7 @@ import { ConfirmDialog } from "../../../components/reusable-components/ConfirmDi
 import CreateMedicine from "./CreateMedicine";
 import UpdateMedicine from "./UpdateMedicine";
 import Pagination1 from "../../../components/reusable-components/Patination1";
-import useDebounce from "../../diseases/hooks/debounce.hook";
+import useDebounce from "../../sharedHooks/debounce.hook";
 import { notifications } from "@mantine/notifications";
 import { FiChevronDown, FiChevronRight, FiChevronUp } from "react-icons/fi";
 import SearchInput from "../../diseases/components/SearchInput";
