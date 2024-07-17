@@ -127,7 +127,7 @@ const MedicineList: React.FC = () => {
   const rows =
     medicines?.data?.map((medicine) => {
       const medicineDiseases = medicine?.diseases ?? [];
-      console.log('medicineDiseases :',medicineDiseases);
+      //console.log('medicineDiseases :',medicineDiseases);
       return (
         <tr key={medicine._id}>
           <td className="py-2 px-4">{medicine.name}</td>

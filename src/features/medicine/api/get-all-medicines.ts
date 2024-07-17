@@ -17,7 +17,7 @@ const fetchMedicines1 = async (query: GetMedicinesQuery): Promise<{ data: IMedic
   
   const params = new URLSearchParams(query as any).toString();
 
-  console.log('params :',params)
+ // console.log('params :',params)
   
   //const response = await fetch("https://emr-backend-intz.onrender.com/api/medicines");
   /* const apiUrl = import.meta.env.VITE_API_URL; 
@@ -41,7 +41,7 @@ interface CustomQueryOptions<TData, TError> extends UseQueryOptions<TData, TErro
 }
 
 export const useGetMedicines1 = (query: GetMedicinesQuery) => {
-  console.log('query inside useGetMedicines1', query);
+  //console.log('query inside useGetMedicines1', query);
   return useQuery({
     queryKey: ['medicines', query],
     queryFn: () => fetchMedicines1(query),

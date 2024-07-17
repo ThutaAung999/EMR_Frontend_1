@@ -1,11 +1,13 @@
-
 import React, { useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Button, TextInput, MultiSelect, Stack, Modal } from "@mantine/core";
 
 import { useUpdateMedicine } from "../api/update-medicine";
 import { IMedicine, IMedicineDTO } from "../model/IMedicine";
-import { useGetDiseases1, GetDiseasesQuery } from "../../../features/diseases/api/get-all-diseases";
+import {
+  useGetDiseases1,
+  GetDiseasesQuery,
+} from "../../../features/diseases/api/get-all-diseases";
 import { IDisease } from "../../diseases/model/IDisease";
 
 interface UpdateMedicineProps {
@@ -13,16 +15,24 @@ interface UpdateMedicineProps {
   closeModal: () => void;
 }
 
-const UpdateMedicine: React.FC<UpdateMedicineProps> = ({ medicine, closeModal }) => {
-  const { control, handleSubmit, formState: { errors }, reset } = useForm<IMedicineDTO>({
+const UpdateMedicine: React.FC<UpdateMedicineProps> = ({
+  medicine,
+  closeModal,
+}) => {
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<IMedicineDTO>({
     defaultValues: {
       ...medicine,
       diseases: medicine.diseases?.map((disease) => disease._id) || [],
     },
   });
 
-  console.log("medicine: "+medicine.diseases.map((disease) =>disease.name) + "\n");
- 
+  //console.log("medicine: "+medicine.diseases.map((disease) =>disease.name) + "\n");
+
   const mutation = useUpdateMedicine();
 
   const defaultQuery: GetDiseasesQuery = {
@@ -32,17 +42,15 @@ const UpdateMedicine: React.FC<UpdateMedicineProps> = ({ medicine, closeModal })
 
   const { data: diseasesData } = useGetDiseases1(defaultQuery);
 
-
   const onSubmit = (data: IMedicineDTO) => {
     const transformedData: IMedicineDTO = {
       ...data,
-      diseases: data.diseases, 
+      diseases: data.diseases,
     };
 
     mutation.mutate(transformedData);
     closeModal();
-  }; 
-
+  };
 
   useEffect(() => {
     reset({
@@ -51,14 +59,13 @@ const UpdateMedicine: React.FC<UpdateMedicineProps> = ({ medicine, closeModal })
     });
   }, [medicine, reset]);
 
+  const diseaseOptions =
+    diseasesData?.data.map((disease: IDisease) => ({
+      value: disease._id,
+      label: disease.name,
+    })) || [];
 
-
-  const diseaseOptions = diseasesData?.data.map((disease:IDisease) => ({
-    value: disease._id,
-    label: disease.name,
-  })) || [];
-
-  console.log("diseaseOptions :",diseaseOptions);
+  //console.log("diseaseOptions :",diseaseOptions);
 
   return (
     <Modal opened={true} onClose={closeModal} title="Edit Medicine">
@@ -92,7 +99,7 @@ const UpdateMedicine: React.FC<UpdateMedicineProps> = ({ medicine, closeModal })
             )}
           />
 
-<Controller
+          <Controller
             name="diseases"
             control={control}
             render={({ field }) => (

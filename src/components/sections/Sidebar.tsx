@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { MdDashboard, MdLogout } from "react-icons/md";
 import { motion } from "framer-motion";
 import { GiPillDrop, GiMedicalPack, GiVirus } from "react-icons/gi";
@@ -7,6 +7,8 @@ import { AiOutlineTag } from "react-icons/ai";
 import { NavLink, useLocation } from "react-router-dom";
 import { NavItem } from "../../constants/nav-items";
 import { useNavigate } from "react-router-dom";
+
+import { AuthContext } from "../../features/auth/providers/AuthContext"; 
 
 const variants = {
   expanded: { width: "15%" },
@@ -44,6 +46,8 @@ const Sidebar: React.FC<{
   const location = useLocation();
   const navigate = useNavigate();
 
+  const { setAuth } = useContext(AuthContext);
+
   useEffect(() => {
     const handleResize = () => {
       const width = window.innerWidth;
@@ -73,8 +77,10 @@ const Sidebar: React.FC<{
 
 
   const handleLogout = () => {
-    localStorage.removeItem("token"); // Clear the token from local storage
-    navigate("/login"); // Redirect to the login page
+    localStorage.removeItem("token"); 
+    //localStorage.removeItem("userImage");
+    setAuth({ token: null, isAuthenticated: false, userImage: null });
+    navigate("/login"); 
   };
   
 
@@ -85,11 +91,12 @@ const Sidebar: React.FC<{
       variants={variants}
       className={`flex flex-col justify-between items-center gap-10 bg-green-300 ${
         isExpanded ? "py-8 px-6" : "px-8 py-6"
-      } h-screen relative`} // Added relative positioning
+      } h-screen relative`} 
     >
       <div 
         id="expanded-icon"
-        className="bg-green-500 text-white p-2 rounded-full cursor-pointer absolute top-4 right-4" // Position it at the top right
+        // re Position FaArrowRight at the top right 
+        className="bg-green-500 text-white p-2 rounded-full cursor-pointer absolute top-4 right-4" 
         onClick={() => setIsExpanded(!isExpanded)}
       >
         <FaArrowRight />

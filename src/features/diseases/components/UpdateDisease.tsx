@@ -38,7 +38,7 @@ const UpdateDisease: React.FC<UpdateDiseaseProps> = ({
       onSuccess: () => {
 
         closeModal();
-        console.log("Disease updated successfully");
+        //console.log("Disease updated successfully");
         
         notifications.show({            
           title: 'Success',

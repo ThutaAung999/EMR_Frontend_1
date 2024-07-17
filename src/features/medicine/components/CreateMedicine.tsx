@@ -63,7 +63,7 @@ const CreateMedicine: React.FC = () => {
         label: disease.name 
     })) || [];
 
-    console.log('disease options in CreateMedicine: ', diseaseOptions);
+    //console.log('disease options in CreateMedicine: ', diseaseOptions);
 
   return (
     <>

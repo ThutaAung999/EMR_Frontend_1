@@ -32,16 +32,15 @@ const CreateDisease: React.FC = () => {
 
       onSuccess: (data: IDiseaseDTO) =>{
 
-        console.log('Successfully saved', data.name, data.description);
+       // console.log('Successfully saved', data.name, data.description);
         
         notifications.show({            
           title: 'Success',
-          message: 'Disease saved successfully',
+          message: 'Disease saved successfully :'+data.name,
           color: 'green',
           autoClose: 3000,
           icon: <IconUpload size={20} />,                        
-          withCloseButton: true,
-          
+          withCloseButton: true,          
         })
       } ,
 
