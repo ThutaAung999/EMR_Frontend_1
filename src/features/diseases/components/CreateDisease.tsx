@@ -7,6 +7,8 @@ import { IDiseaseDTO } from "../model/IDisease";
 import { GiVirus } from "react-icons/gi";
 import { notifications } from "@mantine/notifications";
 import { IconUpload } from "@tabler/icons-react";
+import { FaTimesCircle } from "react-icons/fa"; 
+
 
 const CreateDisease: React.FC = () => {
   const {
@@ -51,7 +53,7 @@ const CreateDisease: React.FC = () => {
           message: 'Disease not saved successfully',
           color: 'red',
           autoClose: 3000,
-          icon: <IconUpload size={20} />,                        
+          icon: <FaTimesCircle size={20} />,                        
           withCloseButton: true,
           
         })

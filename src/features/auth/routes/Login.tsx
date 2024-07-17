@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import instance from "../../../utils/axios"; // Import the custom Axios instance
 import { useForm } from "@mantine/form";
@@ -10,6 +10,7 @@ import {
   Title,
   Container,
   Notification,
+  Loader,
 } from "@mantine/core";
 import { IconCheck, IconX } from "@tabler/icons-react";
 import { AuthContext } from "../providers/AuthContext";
@@ -17,11 +18,12 @@ import axios from "axios"; // Import Axios and AxiosError
 
 const Login: React.FC = () => {
   const { setAuth } = useContext(AuthContext)!;
-  const [notification, setNotification] = React.useState<{
+  const [notification, setNotification] = useState<{
     message: string;
     type: "success" | "error";
   } | null>(null);
-  const navigate = useNavigate(); // React Router's hook for navigation
+  const [loading, setLoading] = useState(false); 
+  const navigate = useNavigate(); 
 
   const form = useForm({
     initialValues: {
@@ -39,9 +41,10 @@ const Login: React.FC = () => {
   });
 
   const handleLogin = async (values: typeof form.values) => {
+    setLoading(true); 
     try {
       const response = await instance.post("/api/users/login", values);
-  
+
       console.log("Login successful:", response.data);
       setAuth({
         token: response.data.token,
@@ -85,10 +88,12 @@ const Login: React.FC = () => {
           type: "error",
         });
       }
-      form.reset(); // Clear form fields on login failure
+      form.reset(); 
+    } finally {
+      setLoading(false);
     }
   };
-   
+
   return (
     <Container
       size={420}
@@ -120,25 +125,31 @@ const Login: React.FC = () => {
             placeholder="your@email.com"
             {...form.getInputProps("email")}
             className="mb-4"
+            disabled={loading} 
           />
           <PasswordInput
             label="Password"
             placeholder="Your password"
             {...form.getInputProps("password")}
             className="mb-6"
+            disabled={loading} 
           />
           <Button
             fullWidth
             mt="xl"
             type="submit"
             className="bg-blue-500 hover:bg-blue-600"
+            disabled={loading}
           >
-            Log In
+            {loading ? <Loader size="sm" color="white" /> : "Log In"}
           </Button>
         </form>
         <div className="mt-6 text-center">
           Don't have an account?{" "}
-          <Link to="/signup" className="text-blue-500 hover:underline">
+          <Link
+            to="/signup"
+            className={`text-blue-500 hover:underline ${loading ? "pointer-events-none opacity-50" : ""}`}
+          >
             Sign Up
           </Link>
         </div>

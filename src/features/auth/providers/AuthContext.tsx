@@ -19,6 +19,7 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
+
 const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [auth, setAuth] = useState({
     token: localStorage.getItem('token'),

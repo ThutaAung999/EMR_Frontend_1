@@ -1,9 +1,11 @@
 import React, { useContext } from 'react';
-import instance from '../../../utils/axios'; // Import the custom Axios instance
+import instance from '../../../utils/axios'; 
 import { useForm } from '@mantine/form';
 import { TextInput, PasswordInput, Button, Paper, Title, Container } from '@mantine/core';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../providers/AuthContext';
+import { notifications } from '@mantine/notifications';
+import { FaTimesCircle } from "react-icons/fa"; 
 
 const Signup: React.FC = () => {
 
@@ -29,33 +31,39 @@ const Signup: React.FC = () => {
 
   const handleSignup = async (values: typeof form.values) => {
     try {
-      // Send a POST request to the signup endpoint with form values
+      
       const response = await instance.post('/api/users/signup', values);
 
-      // Log the success message and response data
+      
       console.log('Registration successful:', response.data);
       setAuth({
         token: response.data.token,
         isAuthenticated: true,
-        userImage: response.data.userImage//user's photo 's image url
+        userImage: response.data.userImage
       });
 
       setNotification({ message: 'Signup  successful!', type: 'success' });
-      navigate('/'); // Redirect to the home page upon successful signup
+      navigate('/'); 
       console.log("notification :",notification);
 
-      // Optionally, handle successful registration (e.g., redirect or show success message)
-      // Example: Redirect to login page after successful registration
       // history.push('/login');
     } catch (error) {
-      // Log the error message
+
       console.error('Registration error:', error);
 
       setNotification({ message: 'Login failed. Please check your credentials and try again.', type: 'error' });
       form.reset();
-      // Handle error (e.g., show error message to the user)
-      // Example: Show an error message using a toast notification library
+
       // showToast('error', 'Registration failed. Please try again.');
+      notifications.show({            
+        title: 'Fail',
+        message: 'Signup not uccessfully',
+        color: 'red',
+        autoClose: 3000,
+        icon: <FaTimesCircle size={20} />,                        
+        withCloseButton: true,
+        
+      })
     }
   };
 
