@@ -14,12 +14,11 @@ import {
 import { useDisclosure } from "@mantine/hooks";
 import { useCreatePatient } from "../api/create-patient";
 import { IPatientDTO } from "../model/IPatient";
-import useGetPatients from "../api/get-all-patients";
-import {
-  useGetDiseases1,
-  GetDiseasesQuery,
-} from "../../diseases/api/get-all-diseases";
+
+import { useGetDiseases1} from "../../diseases/api/get-all-diseases";
 import { useGetDoctors } from "../../doctors/api/get-all-doctors";
+import {BaseTypeForPagination} from '../../utilForFeatures/basePropForPagination';
+
 
 const CreatePatient: React.FC = () => {
   const {
@@ -41,7 +40,7 @@ const CreatePatient: React.FC = () => {
     reset();
   });
 
-  const defaultQuery: GetDiseasesQuery = {
+  const defaultQuery: BaseTypeForPagination = {
     page: 1,
     limit: 100,
   };
@@ -51,6 +50,7 @@ const CreatePatient: React.FC = () => {
     error: diseaseError,
     isLoading: diseaseIsLoading,
   } = useGetDiseases1(defaultQuery);
+
 
   const {
     data: doctors = [],
@@ -64,42 +64,29 @@ const CreatePatient: React.FC = () => {
 
   const [opened, { open, close }] = useDisclosure(false);
 
-  const { error, isLoading } = useGetPatients();
-  if (isLoading || diseaseIsLoading || doctorIsLoading)
+  
+  if (diseaseIsLoading || doctorIsLoading)
     return <div>Loading...</div>;
-  if (error || diseaseError || doctorError) return <div>Error</div>;
+  if (diseaseError || doctorError) return <div>Error</div>;
 
-  const diseaseOnlyData = diseases?.data;
 
-  const diseaseOptions =
-    (Array.isArray(diseaseOnlyData) &&
-      diseaseOnlyData
-        ?.filter(
-          (disease, index, self) =>
-            disease &&
-            disease._id &&
-            self.findIndex((d) => d?._id === disease._id) === index
-        )
-        .map((disease) => ({ value: disease._id, label: disease.name }))) ||
-    [];
+  const diseaseOptions = diseases?.data?.map((disease) => ({ 
+        value: disease._id, 
+        label: disease.name 
+    })) || [];
 
-  const doctorOptions =
-    (Array.isArray(doctors) &&
-      doctors
-        ?.filter(
-          (doctor, index, self) =>
-            doctor &&
-            doctor._id &&
-            self.findIndex((d) => d?._id === doctor._id) === index
-        )
-        .map((doctor) => ({ value: doctor._id, label: doctor.name }))) ||
-    [];
 
+    const doctorOptions = doctors?.map((doctor) => ({ 
+      value: doctor._id, 
+      label: doctor.name 
+  })) || [];
+
+  
   return (
     <>
       <Modal opened={opened} onClose={close} title="New Patient">
         <form onSubmit={handleSubmit(onSubmit)}>
-          <Stack>
+          <Stack spacing="md">
             <Controller
               name="name"
               control={control}

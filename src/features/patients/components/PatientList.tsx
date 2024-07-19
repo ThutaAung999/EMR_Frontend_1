@@ -1,98 +1,141 @@
-import React, { useState } from "react";
-import useGetPatients from "../api/get-all-patients";
-import { Button, Table, TextInput } from "@mantine/core";
-import { usePagination } from "@mantine/hooks";
-import { useDeletePatient } from "../api/delete-patients";
-import { ConfirmDialog } from "../../../components/reusable-components/ConfirmDialog";
-import CreatePatient from "./CreatePatient";
+import React, { useCallback, useEffect, useState } from "react";
+import { Button, Table } from "@mantine/core";
+import { IconEdit, IconTrash } from "@tabler/icons-react";
+import { notifications } from "@mantine/notifications";
+import { FiChevronDown, FiChevronRight, FiChevronUp } from "react-icons/fi";
 
-import { IPatient } from "../model/IPatient";
-import { IconEdit, IconSearch, IconTrash } from "@tabler/icons-react";
+import { useDeletePatient } from "../api/delete-patients";
+import useDebounce from "../../sharedHooks/debounce.hook";
+import useGetPatients1 from "../api/get-all-patients";
+
+import CreatePatient from "./CreatePatient";
 import UpdatePatient from "./UpdatePatient";
-import Pagination from "../../../components/reusable-components/Pagination";
+import { IPatient } from "../model/IPatient";
+
+import { ConfirmDialog } from "../../../components/reusable-components/ConfirmDialog";
+import SearchInput from "../../../components/reusable-components/SearchInput";
+import Pagination1 from "../../../components/reusable-components/Patination1";
 
 export const PatientList: React.FC = () => {
-  const { data, error, isLoading } = useGetPatients();
-  const mutationDelete = useDeletePatient();
+  const [page, setPage] = useState(1);
+  const [limit] = useState(5);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState<string | undefined>();
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc" | undefined>();
 
+  const debouncedSearchQuery = useDebounce(searchQuery, 500);
+  const query = {
+    page,
+    limit,
+    search: debouncedSearchQuery,
+    sortBy,
+    sortOrder,
+  };
+
+  const { data: patients, error, isLoading, refetch } = useGetPatients1(query);
+
+  const mutationDelete = useDeletePatient();
 
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [selectedPatientId, setSelectedPatientId] = useState<string | null>(null);
   const [selectedPatient, setSelectedPatient] = useState<IPatient | null>(null);
   const [updateModalOpen, setUpdateModalOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
 
-  const itemsPerPage = 7;
-  const totalItems = data?.length || 0;
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
-  const { active, setPage, next, previous } = usePagination({
-    total: totalPages,
-    initialPage: 1,
-  });
-
-  if (isLoading ) return <div>Loading...</div>;
-  if (error) return <div>An error occurred: {error.message}</div>;
- 
-  const filterPatients = (patients: IPatient[]) => {
-    return patients.filter((patient) => {
-
-      const patientDiseases =patient.diseases ?? [];
-      const patientDoctors=patient.doctors ?? [];
-
-      
-      const diseasesText = patientDiseases
-        .map((disease) => disease.name)
-        .join(", ");
-      const doctorsText = patientDoctors
-        .map((doctor) => doctor.name)
-        .join(", ");
-
-      return (
-        patient.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        patient.age.toString().includes(searchQuery) ||
-        diseasesText.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        doctorsText.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    });
-  };
-
-  const filteredData = filterPatients(data || []);
-  const currentData = filteredData.slice((active - 1) * itemsPerPage, active * itemsPerPage);
-
-  const handleDelete = (id: string) => {
+  const handleDelete = useCallback((id: string) => {
     setSelectedPatientId(id);
     setConfirmOpen(true);
-  };
+  }, []);
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = useCallback(() => {
     if (selectedPatientId) {
-      mutationDelete.mutate(selectedPatientId);
+      mutationDelete.mutate(selectedPatientId, {
+        onSuccess: () => {
+          setPage(1);
+          notifications.show({
+            title: "Success",
+            message: "Patient deleted successfully",
+            color: "green",
+            autoClose: 3000,
+            icon: <IconTrash size={20} />,
+          });
+        },
+        onError: (error) => {
+          console.error("Error deleting patient:", error);
+        },
+      });
     }
     setConfirmOpen(false);
     setSelectedPatientId(null);
-  };
+  }, [selectedPatientId, mutationDelete]);
 
-  const handleUpdate = (patient: IPatient) => {
+  const handleUpdate = useCallback((patient: IPatient) => {
     setSelectedPatient(patient);
     setUpdateModalOpen(true);
+  }, []);
+
+  const handleSort = useCallback(
+    (column: string) => {
+      if (sortBy === column) {
+        setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+      } else {
+        setSortBy(column);
+        setSortOrder("asc");
+      }
+    },
+    [sortBy, sortOrder]
+  );
+
+  const handleSearchChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setSearchQuery(e.target.value);
+      setPage(1);
+    },
+    []
+  );
+
+  useEffect(() => {
+    refetch();
+  }, [page, limit, debouncedSearchQuery, sortBy, sortOrder, refetch]);
+
+  const getSortIcon = (column: string) => {
+    if (sortBy === column) {
+      return sortOrder === "asc" ? (
+        <FiChevronUp size={16} />
+      ) : (
+        <FiChevronDown size={16} />
+      );
+    }
+    return <FiChevronRight size={16} />;
   };
 
-  const rows = currentData?.map((patient) => {
-    const patientDiseases = patient.diseases ?? [] ;
-      
-    const patientDoctors = patient.doctors ?? [] ;
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>An error occurred: {error.message}</div>;
+
+  const rows = patients?.data?.map((patient) => {
+    const patientDiseases = patient?.diseases ?? [];
+    const patientDoctors = patient.doctors ?? [];
 
     return (
       <tr key={patient._id}>
         <td className="py-2 px-4">{patient.name}</td>
         <td className="py-2 px-4">{patient.age}</td>
-        <td className="py-2 px-4">{patientDiseases.map((disease) => disease.name).join(", ")}</td>
-        <td className="py-2 px-4">{patientDoctors.map((doctor) => doctor.name).join(", ")}</td>
+        <td className="py-2 px-4">
+          {patientDiseases.map((disease) => disease.name).join(", ")}
+        </td>
+        <td className="py-2 px-4">
+          {patientDoctors.map((doctor) => doctor.name).join(", ")}
+        </td>
         <td className="py-2 px-4 w-24 whitespace-nowrap flex gap-2">
-            <Button className="text-white bg-red-600 hover:bg-red-500" onClick={() => handleDelete(patient._id)}>
+          <Button
+            className="text-white bg-red-600 hover:bg-red-500"
+            onClick={() => handleDelete(patient._id)}
+          >
             <IconTrash size={16} />
           </Button>
-          <Button className="text-white bg-yellow-500 hover:bg-yellow-400" onClick={() => handleUpdate(patient)}>
+          <Button
+            className="text-white bg-yellow-500 hover:bg-yellow-400"
+            onClick={() => handleUpdate(patient)}
+          >
             <IconEdit size={16} />
           </Button>
         </td>
@@ -101,26 +144,43 @@ export const PatientList: React.FC = () => {
   }) || [];
 
   return (
-      <section className="h-full w-full bg-gray-50 p-6 rounded-lg shadow-lg">
+    <section className="h-full w-full bg-gray-50 p-6 rounded-lg shadow-lg">
       <div className="flex justify-between items-center mb-6">
         <CreatePatient />
-        <TextInput
-          className="w-80"
+        <SearchInput
           placeholder="Search"
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          mb="md"
-          icon={<IconSearch size={16} />}
+          onChange={handleSearchChange}
         />
       </div>
 
       <div className="h-full w-full">
-        <Table striped highlightOnHover verticalSpacing="md" className="bg-white shadow-sm rounded-lg">
+        <Table
+          striped
+          highlightOnHover
+          verticalSpacing="md"
+          className="bg-white shadow-sm rounded-lg"
+        >
           <thead className="bg-gray-200">
             <tr>
-              <th className="py-2 px-4">Name</th>
-              <th className="py-2 px-4">Age</th>
-              <th className="py-2 px-4">Diseases</th>
+              <th
+                className="py-2 px-4 cursor-pointer"
+                onClick={() => handleSort("name")}
+              >
+                <span className="flex">Name {getSortIcon("name")}</span>
+              </th>
+              <th
+                className="py-2 px-4 cursor-pointer"
+                onClick={() => handleSort("age")}
+              >
+                <span className="flex">Age {getSortIcon("age")}</span>
+              </th>
+              <th
+                className="py-2 px-4 cursor-pointer"
+                onClick={() => handleSort("diseases")}
+              >
+                <span className="flex">Diseases {getSortIcon("diseases")}</span>
+              </th>
               <th className="py-2 px-4">Doctors</th>
               <th className="py-2 px-4">Action</th>
             </tr>
@@ -128,11 +188,28 @@ export const PatientList: React.FC = () => {
           <tbody>{rows}</tbody>
         </Table>
 
-        <Pagination active={active} totalPages={totalPages} setPage={setPage} next={next} previous={previous} />
+        <div className="flex justify-between items-center mt-4">
+          <div>
+            Page {page} of {patients?.totalPages}
+          </div>
+          <Pagination1
+            total={patients?.totalPages || 1}
+            page={page}
+            onChange={setPage}
+          />
+        </div>
 
-        <ConfirmDialog open={confirmOpen} onClose={() => setConfirmOpen(false)} onConfirm={handleConfirmDelete} />
+        <ConfirmDialog
+          open={confirmOpen}
+          onClose={() => setConfirmOpen(false)}
+          onConfirm={handleConfirmDelete}
+        />
+
         {updateModalOpen && selectedPatient && (
-          <UpdatePatient patient={selectedPatient} closeModal={() => setUpdateModalOpen(false)} />
+          <UpdatePatient
+            patient={selectedPatient}
+            closeModal={() => setUpdateModalOpen(false)}
+          />
         )}
       </div>
     </section>

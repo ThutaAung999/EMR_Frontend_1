@@ -6,12 +6,13 @@ export function useDeleteEmr() {
     const queryClient = useQueryClient();
     return useMutation({
       mutationFn: async (emrId: string) => {
-        const apiUrl = import.meta.env.VITE_API_URL;  
+      //  const apiUrl = import.meta.env.VITE_API_URL;  
         const response = await fetch(
           
-          //`http://localhost:9999/api/emrs/${emrId}`,
+          `http://localhost:9999/api/emrs/${emrId}`,
           //`https://emr-backend-intz.onrender.com/api/emrs/${emrId}`,
-          apiUrl+`api/emrs/${emrId}`,
+       
+          //  apiUrl+`api/emrs/${emrId}`,
           {
             method: "DELETE",
           }

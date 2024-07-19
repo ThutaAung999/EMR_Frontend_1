@@ -11,9 +11,10 @@ import Pagination1 from "../../../components/reusable-components/Patination1";
 import useDebounce from "../../sharedHooks/debounce.hook";
 import { notifications } from "@mantine/notifications";
 import { FiChevronDown, FiChevronRight, FiChevronUp } from "react-icons/fi";
-import SearchInput from "../../diseases/components/SearchInput";
+import SearchInput from "../../../components/reusable-components/SearchInput";
 
 const MedicineList: React.FC = () => {
+
   const [page, setPage] = useState(1);
   const [limit] = useState(5);
   const [searchQuery, setSearchQuery] = useState("");
@@ -29,6 +30,7 @@ const MedicineList: React.FC = () => {
     sortOrder,
   };
 
+
   const {
     data: medicines,
     error,
@@ -43,13 +45,10 @@ const MedicineList: React.FC = () => {
 
   const mutationDelete = useDeleteMedicine();
 
+
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const [selectedMedicineId, setSelectedMedicineId] = useState<string | null>(
-    null
-  );
-  const [selectedMedicine, setSelectedMedicine] = useState<IMedicine | null>(
-    null
-  );
+  const [selectedMedicineId, setSelectedMedicineId] = useState<string | null>(null);
+  const [selectedMedicine, setSelectedMedicine] = useState<IMedicine | null>(null);
   const [updateModalOpen, setUpdateModalOpen] = useState(false);
 
   const handleDelete = useCallback((id: string) => {
@@ -181,6 +180,7 @@ const MedicineList: React.FC = () => {
               >
                 <span className="flex">Name {getSortIcon("name")}</span>
               </th>
+
               <th
                 className="py-2 px-4 cursor-pointer"
                 onClick={() => handleSort("manufacturer")}
@@ -189,6 +189,7 @@ const MedicineList: React.FC = () => {
                   Manufacturer {getSortIcon("manufacturer")}
                 </span>
               </th>
+
               <th
                 className="py-2 px-4 cursor-pointer"
                 onClick={() => handleSort("diseases")}
@@ -205,6 +206,7 @@ const MedicineList: React.FC = () => {
           <div>
             Page {page} of {medicines?.totalPages}
           </div>
+
           <Pagination1
             total={medicines?.totalPages || 1}
             page={page}

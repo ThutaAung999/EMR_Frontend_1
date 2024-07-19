@@ -12,10 +12,12 @@ export function useCreateTag(onSuccessCallback?: () => void) {
 
             console.log('Payload being sent:', tag); // Log payload
 
-            const apiUrl = import.meta.env.VITE_API_URL;  
-            //const response = await fetch('http://localhost:9999/api/tags', {
+            //const apiUrl = import.meta.env.VITE_API_URL;  
+            //  const response = await fetch(apiUrl+'api/tags', {
+
+            const response = await fetch(`http://localhost:9999/api/tags`, {
                 //const response = await fetch('https://emr-backend-intz.onrender.com/api/tags', {
-                const response = await fetch(apiUrl+'api/tags', {
+              
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json',
@@ -33,15 +35,20 @@ export function useCreateTag(onSuccessCallback?: () => void) {
             return response.json();
         },
 
-        onMutate: (newTagInfo: ITagDTO) => {
+        onMutate:async (newTagInfo: ITagDTO) => {
+            await queryClient.cancelQueries({ queryKey: ['tags'] });
+
+            const previousTags = queryClient.getQueryData<ITag[]>(['tag']) ?? [];
+
             queryClient.setQueryData(
                 ['tags'],
-                (prevTags: ITag[]) => [
-                    ...prevTags,
+               [
+                
                     {
                         ...newTagInfo,
                         _id: `temp-id-${Date.now()}`, // temporary ID until server responds
                     },
+                    ...previousTags,
                 ] as ITag[],
             );
         },

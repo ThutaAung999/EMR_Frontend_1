@@ -15,10 +15,10 @@ export function useCreateEmr(onSuccessCallback?: () => void) {
 
             console.log('Payload being sent:', emr); // Log payload
 
-             const apiUrl = import.meta.env.VITE_API_URL;  
+          /*    const apiUrl = import.meta.env.VITE_API_URL;  
             const response = await fetch(apiUrl+'api/emrs', {
-            
-            //const response = await fetch('http://localhost:9999/api/emrs', {
+           */  
+            const response = await fetch('http://localhost:9999/api/emrs', {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json',
@@ -38,15 +38,21 @@ export function useCreateEmr(onSuccessCallback?: () => void) {
 
         //Optimistic update
         //This function is called before the mutation function runs
-        onMutate: (newEmrInfo: IEmrDTO) => {
+        onMutate: async (newEmrInfo: IEmrDTO) => {
+            
+            await queryClient.cancelQueries({ queryKey: ['emrs'] });
+
+            const previousMedicines = queryClient.getQueryData<IEmr[]>(['emr']) ?? [];
+
+
             queryClient.setQueryData(
                 ['emrs'],
-                (prevEmrs: IEmr[]) => [
-                    ...prevEmrs,
+                [
                     {
                         ...newEmrInfo,
                         _id: `temp-id-${Date.now()}`, // temporary ID until server responds
                     },
+                    ...previousMedicines,
                 ] as IEmr[],
             );
         },

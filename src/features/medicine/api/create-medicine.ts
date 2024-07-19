@@ -6,7 +6,6 @@ import { IMedicineDTO } from "../model/IMedicine";
 
 export function useCreateMedicine(onSuccessCallback?: () => void) {
   const queryClient = useQueryClient();
-  
 
   return useMutation({
     mutationFn: async (medicine: IMedicineDTO) => {
@@ -38,6 +37,7 @@ export function useCreateMedicine(onSuccessCallback?: () => void) {
       }
       return response.json();
     },
+
 
     onMutate: async (newMedicineInfo: IMedicineDTO) => {
 

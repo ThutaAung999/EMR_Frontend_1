@@ -13,11 +13,10 @@ import {
 
 import { useUpdatePatient } from "../api/update-patient";
 import { IPatient } from "../model/IPatient";
-import {
-  useGetDiseases1,
-  GetDiseasesQuery,
-} from "../../../features/diseases/api/get-all-diseases";
+import {useGetDiseases1} from "../../../features/diseases/api/get-all-diseases";
 import { useGetDoctors } from "../../../features/doctors/api/get-all-doctors";
+import {BaseTypeForPagination} from '../../utilForFeatures/basePropForPagination';
+
 
 interface UpdatePatientProps {
   patient: IPatient;
@@ -43,7 +42,7 @@ const UpdatePatient: React.FC<UpdatePatientProps> = ({
 
   const mutation = useUpdatePatient();
 
-  const defaultQuery: GetDiseasesQuery = {
+  const defaultQuery: BaseTypeForPagination = {
     page: 1,
     limit: 50,
   };

@@ -1,70 +1,131 @@
-import React, { useState } from "react";
-import { useGetTags } from "../api/get-all-tags";
-import { usePagination } from "@mantine/hooks";
-import { IconEdit, IconSearch, IconTrash } from "@tabler/icons-react";
+import React, { useCallback, useEffect, useState } from "react";
+import { IconEdit, IconTrash } from "@tabler/icons-react";
+import { Button, Table } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
+import { FiChevronDown, FiChevronRight, FiChevronUp } from "react-icons/fi";
+
+import { useGetTags1 } from "../api/get-all-tags";
 import { useDeleteTag } from "../api/delete-tag";
-import { ConfirmDialog } from "../../../components/reusable-components/ConfirmDialog";
+import useDebounce from "../../sharedHooks/debounce.hook";
+
+
 import { CreateTag } from "./CreateTag";
-import Pagination from "../../../components/reusable-components/Pagination";
 import { UpdateTag } from "./UpdateTag";
-import { Button, Table, TextInput } from "@mantine/core";
+import SearchInput from "../../../components/reusable-components/SearchInput";
+
 import { ITag } from "../model/ITag";
+import { ConfirmDialog } from "../../../components/reusable-components/ConfirmDialog";
+import Pagination1 from "../../../components/reusable-components/Patination1";
 
 const TagList: React.FC = () => {
-  const { data: tags, error: tagsError, isLoading: tagsLoading } = useGetTags();
+
+  const [page, setPage] = useState(1);
+  const [limit] = useState(5);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState<string | undefined>();
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc" | undefined>();
+
+  const debouncedSearchQuery = useDebounce(searchQuery, 500);
+  const query = {
+    page,
+    limit,
+    search: debouncedSearchQuery,
+    sortBy,
+    sortOrder,
+  };
+
+
+  const {
+    data: tags,
+    error,
+    isLoading,
+    refetch,
+} = useGetTags1(query);
+
   const mutationDelete = useDeleteTag();
 
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [selectedTagId, setSelectedTagId] = useState<string | null>(null);
-
   const [selectedTag, setSelectedTag] = useState<ITag | null>(null);
   const [updateModalOpen, setUpdateModalOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-
-  const itemsPerPage = 7;
-  const totalItems = tags?.length || 0;
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
-  const { active, setPage, next, previous } = usePagination({
-    total: totalPages,
-    initialPage: 1,
-  });
-
-  const filterTags = (tagsData: ITag[]) => {
-    return tagsData.filter((tag) => {
-      return tag.name.toLowerCase().includes(searchQuery.toLowerCase());
-    });
-  };
-
-  const filteredData = filterTags(tags || []);
-  const currentData = filteredData.slice(
-    (active - 1) * itemsPerPage,
-    active * itemsPerPage
-  );
-
-  if (tagsLoading) return <div>Loading...</div>;
-  if (tagsError) return <div>Error</div>;
-  if (!tags) return <div>No Tags</div>;
-
+  
   const handleDelete = (id: string) => {
     setSelectedTagId(id);
     setConfirmOpen(true);
   };
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = useCallback(() => {
     if (selectedTagId) {
-      mutationDelete.mutate(selectedTagId);
+      mutationDelete.mutate(selectedTagId, {
+        onSuccess: () => {
+          setPage(1);
+          notifications.show({
+            title: "Success",
+            message: "Medicine deleted successfully",
+            color: "green",
+            autoClose: 3000,
+            icon: <IconTrash size={20} />,
+          });
+        },
+        onError: (error) => {
+          console.error("Error deleting medicine:", error);
+        },
+      });
     }
     setConfirmOpen(false);
     setSelectedTagId(null);
-  };
+  }, [selectedTagId, mutationDelete]);
 
-  const handleUpdate = (tag: ITag) => {
+  
+  const handleUpdate = useCallback((tag: ITag) => {
     setSelectedTag(tag);
     setUpdateModalOpen(true);
-  };
+  },[]);
 
+
+  const handleSort = useCallback(
+    (column: string) => {
+      if (sortBy === column) {
+        setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+      } else {
+        setSortBy(column);
+        setSortOrder("asc");
+      }
+    },
+    [sortBy, sortOrder]
+  );
+
+  const handleSearchChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setSearchQuery(e.target.value);
+      setPage(1);
+    },
+    []
+  );
+
+  useEffect(() => {
+    refetch();
+  }, [page, limit, debouncedSearchQuery, sortBy, sortOrder, refetch]);
+
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error</div>;
+  if (!tags) return <div>No Tags</div>;
+
+  const getSortIcon = (column: string) => {
+    if (sortBy === column) {
+      return sortOrder === "asc" ? (
+        <FiChevronUp size={16} />
+      ) : (
+        <FiChevronDown size={16} />
+      );
+    }
+    return <FiChevronRight size={16} />;
+  };
+  
   const rows =
-    currentData?.map((tag) => {
+
+    tags?.data?.map((tag) => {
       return (
         <tr key={tag._id}>
           <td className="py-2 px-4">{tag.name}</td>
@@ -90,13 +151,10 @@ const TagList: React.FC = () => {
     <section className="h-full w-full bg-gray-50 p-6 rounded-lg shadow-lg">
       <div className="flex justify-between items-center mb-6">
         <CreateTag />
-        <TextInput
-          className="w-80"
+        <SearchInput
           placeholder="Search"
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          mb="md"
-          icon={<IconSearch size={16} />}
+          onChange={handleSearchChange}
         />
       </div>
 
@@ -104,20 +162,30 @@ const TagList: React.FC = () => {
         <Table striped highlightOnHover verticalSpacing="md" className="bg-white shadow-sm rounded-lg">
           <thead className="bg-gray-200">
             <tr>
-              <th className="py-2 px-4">Name</th>
+                <th
+                className="py-2 px-4 cursor-pointer"
+                onClick={() => handleSort("name")}
+              >
+                <span className="flex">Name {getSortIcon("name")}</span>
+              </th>
+
               <th className="py-2 px-4">Action</th>
             </tr>
           </thead>
           <tbody>{rows}</tbody>
         </Table>
 
-        <Pagination
-          active={active}
-          totalPages={totalPages}
-          setPage={setPage}
-          next={next}
-          previous={previous}
-        />
+
+        <div className="flex justify-between items-center mt-4">
+          <div>
+            Page {page} of {tags?.totalPages}
+          </div>
+          <Pagination1
+            total={tags?.totalPages || 1}
+            page={page}
+            onChange={setPage}
+          />
+        </div>
 
         <ConfirmDialog
           open={confirmOpen}

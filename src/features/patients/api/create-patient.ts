@@ -5,7 +5,7 @@ export function useCreatePatient(onSuccessCallback?: () => void) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (patient: IPatientDTO) => {
-      // Client-side validation (example)
+      // Client-side validation
       if (
         !patient.name ||
         !patient.age ||
@@ -19,10 +19,11 @@ export function useCreatePatient(onSuccessCallback?: () => void) {
 
       console.log("Payload being sent:", patient); // Log payload
 
+
       //const response = await fetch('https://emr-backend-intz.onrender.com/api/patients', {
       /* const apiUrl = import.meta.env.VITE_API_URL;
             const response = await fetch(apiUrl+'api/patients', { */
-      const response = await fetch("http://localhost:9999/api/patients", {
+      const response = await fetch(`http://localhost:9999/api/patients`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -40,18 +41,25 @@ export function useCreatePatient(onSuccessCallback?: () => void) {
       return response.json();
     },
 
-    onMutate: (newPatientInfo: IPatientDTO) => {
+    onMutate:async (newPatientInfo: IPatientDTO) => {
+
+      await queryClient.cancelQueries({ queryKey: ['patients'] });
+
+      const previousPatients = queryClient.getQueryData<IPatient[]>(['patient']) ?? [];
+
       queryClient.setQueryData(
         ["patients"],
-        (prevPatients: IPatient[]) =>
+        
           [
-            ...prevPatients,
+        
             {
               ...newPatientInfo,
               _id: `temp-id-${Date.now()}`, // temporary ID until server responds
             },
+            ...previousPatients,
           ] as IPatient[]
       );
+      return { previousPatients };
     },
 
     onSettled: () => queryClient.invalidateQueries({ queryKey: ["patients"] }),

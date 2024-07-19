@@ -1,7 +1,6 @@
-
-
 import { useQuery, UseQueryOptions } from "@tanstack/react-query";
 import { IDisease } from "../model/IDisease";
+import {BaseTypeForPagination} from '../../utilForFeatures/basePropForPagination';
 
 //Before updating
 // Fetch diseases
@@ -45,16 +44,8 @@ export const useGetDiseases = () => {
 //--------------------------------------------------------------------------------------------------------------------------------
 //After updating
 
-export interface GetDiseasesQuery {
-  page: number;
-  limit: number;
-  search?: string;
-  sortBy?: string;
-  sortOrder?: 'asc' | 'desc';
-  noLimit?: boolean;
-}
 
-const fetchDiseases1 = async (query: GetDiseasesQuery): Promise<{ data: IDisease[]; total: number; page: number; totalPages: number }> => {  
+const fetchDiseases1 = async (query: BaseTypeForPagination): Promise<{ data: IDisease[]; total: number; page: number; totalPages: number }> => {  
   
   const params = new URLSearchParams(query as any).toString();
   
@@ -79,7 +70,7 @@ interface CustomQueryOptions<TData, TError> extends UseQueryOptions<TData, TErro
   keepPreviousData?: boolean;
 }
 
-export const useGetDiseases1 = (query: GetDiseasesQuery) => {
+export const useGetDiseases1 = (query: BaseTypeForPagination) => {
   return useQuery({
     queryKey: ['diseases', query],
     queryFn: () => fetchDiseases1(query),

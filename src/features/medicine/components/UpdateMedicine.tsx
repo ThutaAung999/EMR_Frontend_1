@@ -4,11 +4,10 @@ import { Button, TextInput, MultiSelect, Stack, Modal } from "@mantine/core";
 
 import { useUpdateMedicine } from "../api/update-medicine";
 import { IMedicine, IMedicineDTO } from "../model/IMedicine";
-import {
-  useGetDiseases1,
-  GetDiseasesQuery,
-} from "../../../features/diseases/api/get-all-diseases";
+import {useGetDiseases1} from "../../../features/diseases/api/get-all-diseases";
 import { IDisease } from "../../diseases/model/IDisease";
+import {BaseTypeForPagination} from "../../utilForFeatures/basePropForPagination";
+
 
 interface UpdateMedicineProps {
   medicine: IMedicine;
@@ -35,7 +34,7 @@ const UpdateMedicine: React.FC<UpdateMedicineProps> = ({
 
   const mutation = useUpdateMedicine();
 
-  const defaultQuery: GetDiseasesQuery = {
+  const defaultQuery: BaseTypeForPagination = {
     page: 1,
     limit: 50,
   };

@@ -6,8 +6,9 @@ import { Button, Modal, MultiSelect, Stack, TextInput,Loader } from "@mantine/co
 import { useDisclosure } from "@mantine/hooks";
 import { useCreateMedicine } from "../api/create-medicine";
 import { IMedicineDTO } from "../model/IMedicine";
-import { useGetDiseases1,GetDiseasesQuery } from "../../diseases/api/get-all-diseases";
+import { useGetDiseases1 } from "../../diseases/api/get-all-diseases";
 import { GiPillDrop } from "react-icons/gi";
+import {BaseTypeForPagination} from "../../utilForFeatures/basePropForPagination";
 
 const CreateMedicine: React.FC = () => {
   const {
@@ -28,24 +29,13 @@ const CreateMedicine: React.FC = () => {
     reset();
   });
 
-
   const onSubmit = (data: IMedicineDTO) => {
     mutation.mutate(data);
   };
 
-
-  /* const onSubmit = (data: IMedicineDTO) => {
-    const transformedMedicine: IMedicineDTO = {
-      ...data,
-      diseases: data.diseases,
-    };
-    mutation.mutate(transformedMedicine);
-  };
-  
- */
   const [opened, { open, close }] = useDisclosure(false);
 
-  const defaultQuery: GetDiseasesQuery = {
+  const defaultQuery: BaseTypeForPagination = {
     page: 1,
     limit: 100, 
   };
@@ -53,10 +43,8 @@ const CreateMedicine: React.FC = () => {
   const { data: diseases, error: diseaseError, isLoading: diseaseIsLoading } =
   useGetDiseases1(defaultQuery);
 
-
   if (diseaseIsLoading) return <div>Loading...</div>;
   if (diseaseError) return <div>Error</div>;
-
 
     const diseaseOptions = diseases?.data?.map((disease) => ({ 
         value: disease._id, 
@@ -95,7 +83,7 @@ const CreateMedicine: React.FC = () => {
                   {...field}
                   error={errors.manufacturer?.message}
                 />
-              )}
+                )}
             />
 
             <Controller

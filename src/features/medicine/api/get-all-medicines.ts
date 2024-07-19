@@ -1,21 +1,23 @@
 import { useQuery, UseQueryOptions } from "@tanstack/react-query";
 import { IMedicine } from "../model/IMedicine";
-
+import {BaseTypeForPagination} from '../../utilForFeatures/basePropForPagination';
 //after updating
 
-export interface GetMedicinesQuery {
-  page: number;
-  limit: number;
-  search?: string;
-  sortBy?: string;
-  sortOrder?: 'asc' | 'desc';
-  noLimit?: boolean;
-}
+const fetchMedicines1 = async (query: BaseTypeForPagination):
+    Promise<{ data: IMedicine[]; total: number; page: number; totalPages: number }> => {
 
+  //const params = new URLSearchParams(query as any).toString();
 
-const fetchMedicines1 = async (query: GetMedicinesQuery): Promise<{ data: IMedicine[]; total: number; page: number; totalPages: number }> => {  
-  
-  const params = new URLSearchParams(query as any).toString();
+   // Convert query object to URLSearchParams, filtering out undefined values
+   //undefined values တွေပါရင် error တက်နေလို့ အောက်ကကောင်နဲံရှင်းထားတာ
+     const params = new URLSearchParams(
+      Object.entries(query).reduce((acc, [key, value]) => {
+        if (value !== undefined) {
+          acc[key] = value.toString();
+        }
+        return acc;
+      }, {} as Record<string, string>)
+    ).toString();
 
  // console.log('params :',params)
   
@@ -35,12 +37,11 @@ const fetchMedicines1 = async (query: GetMedicinesQuery): Promise<{ data: IMedic
   return response.json();
 };
 
-
 interface CustomQueryOptions<TData, TError> extends UseQueryOptions<TData, TError> {
   keepPreviousData?: boolean;
 }
 
-export const useGetMedicines1 = (query: GetMedicinesQuery) => {
+export const useGetMedicines1 = (query: BaseTypeForPagination) => {
   //console.log('query inside useGetMedicines1', query);
   return useQuery({
     queryKey: ['medicines', query],

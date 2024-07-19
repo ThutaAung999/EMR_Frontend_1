@@ -10,6 +10,7 @@ import { IconUpload } from "@tabler/icons-react";
 import { FaTimesCircle } from "react-icons/fa"; 
 
 
+
 const CreateDisease: React.FC = () => {
   const {
     control,
