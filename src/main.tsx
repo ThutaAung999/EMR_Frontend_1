@@ -5,7 +5,7 @@ import "./index.css";
 import { MantineProvider } from "@mantine/core";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { BrowserRouter } from "react-router-dom";
-import { Notifications } from '@mantine/notifications';
+import { Notifications } from "@mantine/notifications";
 
 import AuthProvider from "./features/auth/providers/AuthContext.tsx";
 
@@ -13,15 +13,15 @@ const queryClient = new QueryClient();
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <MantineProvider>
-      <AuthProvider>
-        <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient}>
+      <MantineProvider>
+        <AuthProvider>
           <BrowserRouter>
-          <Notifications position="top-right" zIndex={2077}/>
+            <Notifications position="top-right" zIndex={2077} />
             <App />
           </BrowserRouter>
-        </QueryClientProvider>
-      </AuthProvider>
-    </MantineProvider>
+        </AuthProvider>
+      </MantineProvider>
+    </QueryClientProvider>
   </React.StrictMode>
 );

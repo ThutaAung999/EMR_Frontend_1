@@ -7,26 +7,26 @@ import {
   Modal,
   Loader,
 } from "@mantine/core";
-
 import { Controller, useForm } from "react-hook-form";
-
-import axios from "axios";
 import { FaPlus, FaTimes } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-
-import { IEmrDTO, EmrImage } from "../model/emr.model";
-
+import { IEmrDTO } from "../model/emr.model";
 import { useCreateEmr } from "../api/create-emr";
+
 import { useGetDiseases1 } from "../../diseases/api/get-all-diseases";
 import { useGetMedicines1 } from "../../medicine/api/get-all-medicines";
 import useGetPatients1 from "../../patients/api/get-all-patients";
 import { useGetTags1 } from "../../tags/api/get-all-tags";
 
+
+import { useImageUpload } from "./customHooks/fileUpload";
 import { BaseTypeForPagination } from "../../utilForFeatures/basePropForPagination";
+import { IDisease } from "../../diseases/model/IDisease";
+import { IPatient } from "../../patients/model/IPatient";
+import { IMedicine } from "../../medicine/model/IMedicine";
+import { ITag } from "../../tags/model/ITag";
 
 const CreateEmr: React.FC = () => {
-  // const apiUrl = import.meta.env.VITE_API_URL;
-
   const {
     control,
     handleSubmit,
@@ -43,107 +43,61 @@ const CreateEmr: React.FC = () => {
   });
 
   const navigate = useNavigate();
-
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  //const { data: emrs, error, isLoading } = useGetEmrs();
-
-  const defaultQuery: BaseTypeForPagination = {
-    page: 1,
-    limit: 100,
-  };
+  const defaultQuery: BaseTypeForPagination = { page: 1, limit: 100 };
 
   const {
     data: diseases,
-    error: diseaseError,
     isLoading: diseaseIsLoading,
+    error: diseaseError,
   } = useGetDiseases1(defaultQuery);
-
   const {
     data: medicines,
-    error: medicineError,
     isLoading: medicineIsLoading,
+    error: medicineError,
   } = useGetMedicines1(defaultQuery);
   const {
     data: patients,
-    error: patientError,
     isLoading: patientIsLoading,
+    error: patientError,
   } = useGetPatients1(defaultQuery);
-
   const {
     data: tags,
-    error: tagError,
     isLoading: tagIsLoading,
+    error: tagError,
   } = useGetTags1(defaultQuery);
 
-  const mutation = useCreateEmr(() => {
-    reset();
-    setUploadedImages([]); // Clear uploaded images
-    if (fileInputRef.current) {
-      fileInputRef.current.value = ""; // Reset file input
-    }
-    navigate("/emrs"); // Navigate to the desired route after saving
-  });
+  const { uploadedImages, uploadImages, removeImage } = useImageUpload();
 
-  const [uploadedImages, setUploadedImages] = useState<EmrImage[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
-  const handleImageSelect = (files: FileList | null) => {
-    if (!files || files.length === 0) return;
+  const mutation = useCreateEmr(() => {
+    reset();
+    setSelectedFiles([]);
+    setSelectedTags([]);
+    navigate("/emrs");
+  });
 
-    const fileArray = Array.from(files);
-    setSelectedFiles(fileArray);
+  const handleImageSelect = (files: FileList | null) => {
+    if (!files) return;
+    setSelectedFiles(Array.from(files));
   };
 
   const handleImageUpload = async () => {
-    if (selectedFiles.length === 0) return;
-
-    const formData = new FormData();
-    selectedFiles.forEach((file) => {
-      formData.append("image", file);
-    });
-
-    try {
-      const res = await axios.post(
-        "http://localhost:9999/api/emrs/uploads",
-        //"https://emr-backend-intz.onrender.com/api/emrs/uploads",
-        // apiUrl + "api/emrs/uploads",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-
-      const { images } = res.data;
-      const newImages: EmrImage[] = images.map((image: { image: string }) => ({
-        image: image.image,
-        tags: selectedTags, // Add selected tags to the uploaded image
-      }));
-      setUploadedImages((prev) => [...prev, ...newImages]);
-      setSelectedTags([]); // Reset tags after saving
-      setModalOpen(false); // Close modal after saving
-      setSelectedFiles([]); // Clear selected files
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const handleRemoveImage = (index: number) => {
-    // Remove the image from selected files if not uploaded yet
-    //This function receives the current state (prevFiles) and returns the new state.
-    setSelectedFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
-    // Remove the image from uploaded images if already uploaded
-    setUploadedImages((prevImages) => prevImages.filter((_, i) => i !== index));
+    await uploadImages(selectedFiles, selectedTags);
+    setSelectedTags([]);
+    setSelectedFiles([]);
+    setModalOpen(false);
   };
 
   const onSubmit = (data: IEmrDTO) => {
     data.emrImages = uploadedImages;
     mutation.mutate(data);
   };
+
   const handleModalClose = () => {
     setModalOpen(false);
     setSelectedFiles([]);
@@ -156,33 +110,22 @@ const CreateEmr: React.FC = () => {
     return <div>Error</div>;
 
   const diseaseOptions =
-    (Array.isArray(diseases?.data) &&
-      diseases?.data.map((disease) => ({
-        value: disease._id,
-        label: disease.name,
-      }))) ||
-    [];
-
+    diseases?.data?.map((disease: IDisease) => ({
+      value: disease._id,
+      label: disease.name,
+    })) || [];
   const patientOptions =
-    (Array.isArray(patients?.data) &&
-      patients?.data?.map((patient) => ({
-        value: patient._id,
-        label: patient.name,
-      }))) ||
-    [];
-
+    patients?.data?.map((patient: IPatient) => ({
+      value: patient._id,
+      label: patient.name,
+    })) || [];
   const medicineOptions =
-    (Array.isArray(medicines?.data) &&
-      medicines?.data?.map((medicine) => ({
-        value: medicine._id,
-        label: medicine.name,
-      }))) ||
-    [];
-
+    medicines?.data?.map((medicine: IMedicine) => ({
+      value: medicine._id,
+      label: medicine.name,
+    })) || [];
   const tagsOptions =
-    (Array.isArray(tags?.data) &&
-      tags?.data?.map((tag) => ({ value: tag._id, label: tag.name }))) ||
-    [];
+    tags?.data?.map((tag: ITag) => ({ value: tag._id, label: tag.name })) || [];
 
   return (
     <section className="h-full w-full">
@@ -204,14 +147,11 @@ const CreateEmr: React.FC = () => {
                   >
                     Add Item
                   </Button>
-
                   <div className="mt-2 flex flex-row items-center w-30 h-30 rounded-full ms-4">
                     {uploadedImages.map((image, index) => (
                       <div key={index} className="relative">
                         <img
-                          //src={`https://emr-backend-intz.onrender.com/${image.image}`}
                           src={`http://localhost:9999/${image.image}`}
-                          // src={apiUrl + `${image.image}`}
                           alt="Uploaded"
                           className="w-24 h-24 rounded-full"
                           style={{ margin: "10px" }}
@@ -219,7 +159,7 @@ const CreateEmr: React.FC = () => {
                         <button
                           type="button"
                           className="absolute top-0 right-0"
-                          onClick={() => handleRemoveImage(index)} // Pass index to handleRemoveImage
+                          onClick={() => removeImage(index)}
                         >
                           <FaTimes />
                         </button>
@@ -229,7 +169,6 @@ const CreateEmr: React.FC = () => {
                 </div>
               )}
             />
-
             <Controller
               name="diseases"
               control={control}
@@ -246,7 +185,6 @@ const CreateEmr: React.FC = () => {
                 />
               )}
             />
-
             <Controller
               name="medicines"
               control={control}
@@ -263,7 +201,6 @@ const CreateEmr: React.FC = () => {
                 />
               )}
             />
-
             <Controller
               name="patients"
               control={control}
@@ -280,7 +217,6 @@ const CreateEmr: React.FC = () => {
                 />
               )}
             />
-
             <Controller
               name="notes"
               control={control}
@@ -296,7 +232,6 @@ const CreateEmr: React.FC = () => {
                 />
               )}
             />
-
             <div className="flex flex-row gap-6 justify-end">
               <Button
                 onClick={() => navigate("/emrs")}
@@ -315,7 +250,6 @@ const CreateEmr: React.FC = () => {
           </Stack>
         </form>
       </div>
-
       <Modal
         opened={modalOpen}
         onClose={handleModalClose}
@@ -338,18 +272,17 @@ const CreateEmr: React.FC = () => {
                 key={index}
                 src={URL.createObjectURL(file)}
                 alt="Selected"
-                className="w-48 h-48 "
+                className="w-48 h-48"
               />
             ))}
           </div>
-
           <MultiSelect
             data={tagsOptions}
             label="Tags"
             placeholder="Select tags"
             value={selectedTags}
+            maxDropdownHeight={150}
             onChange={setSelectedTags}
-            /*     styles={dropdownStyles} */
           />
           <div className="flex flex-row gap-6 justify-end mt-4">
             <Button onClick={handleModalClose} disabled={mutation.isPending}>
