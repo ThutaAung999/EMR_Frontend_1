@@ -46,7 +46,7 @@ const Sidebar: React.FC<{
   const location = useLocation();
   const navigate = useNavigate();
 
-  const { setAuth } = useContext(AuthContext);
+  const authContext = useContext(AuthContext);
 
   useEffect(() => {
     const handleResize = () => {
@@ -79,7 +79,7 @@ const Sidebar: React.FC<{
   const handleLogout = () => {
     localStorage.removeItem("token"); 
     //localStorage.removeItem("userImage");
-    setAuth({ token: null, isAuthenticated: false, userImage: null });
+    authContext?.setAuth({ token: null, isAuthenticated: false, userImage: null });
     navigate("/login"); 
   };
   

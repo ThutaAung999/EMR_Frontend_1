@@ -51,7 +51,7 @@ const UpdateMedicine: React.FC<UpdateMedicineProps> = ({
 
     mutation.mutate(transformedData,{
       onSuccess: () => {
-        //closeModal();
+        
 
         notifications.show({
           title: "Success",
@@ -61,9 +61,9 @@ const UpdateMedicine: React.FC<UpdateMedicineProps> = ({
           icon: <FaEdit size={20} />,
           withCloseButton: true,
         });
+        closeModal();
       },
       onError: (error) => {
-        //closeModal();
         
         notifications.show({            
           title: 'Fail',
@@ -74,10 +74,10 @@ const UpdateMedicine: React.FC<UpdateMedicineProps> = ({
           withCloseButton: true,
         })
         console.error("Failed to update disease", error);
-
+        closeModal();
       },
     });
-    closeModal();
+    
   };
 
   useEffect(() => {

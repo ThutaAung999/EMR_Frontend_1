@@ -199,7 +199,9 @@ const UpdateEmr: React.FC<UpdateEmrProps> = ({ emr, closeModal }) => {
                         //src={apiUrl + `${image.image}`}
                         src={`http://localhost:9999/${image.image}`}
                         alt="Uploaded"
-                        className="object-cover w-32 h-32 rounded-lg shadow-md mx-3 "
+                        className="w-24 h-24 rounded-full"
+                        style={{ margin: "10px" }}
+                        
                       />
                       <button
                         type="button"

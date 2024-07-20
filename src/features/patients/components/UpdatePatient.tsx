@@ -1,4 +1,3 @@
-// components/UpdatePatient.tsx
 import React, { useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import {
@@ -69,6 +68,7 @@ const UpdatePatient: React.FC<UpdatePatientProps> = ({
           icon: <FaEdit size={20} />,
           withCloseButton: true,
         });
+        closeModal();
       },
       onError: (error) => {
         notifications.show({
@@ -80,9 +80,10 @@ const UpdatePatient: React.FC<UpdatePatientProps> = ({
           withCloseButton: true,
         });
         console.error("Failed to update patient", error);
+        closeModal();
       },
     });
-    closeModal();
+    
   };
 
   useEffect(() => {

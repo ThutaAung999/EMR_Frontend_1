@@ -8,6 +8,7 @@ export type IMedicine = {
   }
   
   export type IMedicineDTO = {
+    _id: string;
     name: string;
     manufacturer: string;
     diseases: string[];    

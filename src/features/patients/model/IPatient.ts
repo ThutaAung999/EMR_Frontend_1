@@ -10,6 +10,7 @@ import { IDoctor } from "../../doctors/model/IDoctor";
   };
     
 export type IPatientDTO = {
+  _id: string;
   name: string;
   age: number;
   diseases: string[];
