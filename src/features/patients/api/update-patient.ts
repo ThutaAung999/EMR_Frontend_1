@@ -1,12 +1,12 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { IPatient } from "../model/IPatient";
+import { IPatientDTO } from "../model/IPatient";
 
 export function useUpdatePatient() {
   const queryClient = useQueryClient();
 
   const updatePatient = useMutation({
-    mutationFn: async (updatedPatient: IPatient) => {
+    mutationFn: async (updatedPatient: IPatientDTO) => {
 
         
       

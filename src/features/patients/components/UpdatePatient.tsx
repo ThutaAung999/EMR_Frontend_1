@@ -1,4 +1,3 @@
-
 // components/UpdatePatient.tsx
 import React, { useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
@@ -13,10 +12,11 @@ import {
 
 import { useUpdatePatient } from "../api/update-patient";
 import { IPatient } from "../model/IPatient";
-import {useGetDiseases1} from "../../../features/diseases/api/get-all-diseases";
+import { useGetDiseases1 } from "../../../features/diseases/api/get-all-diseases";
 import { useGetDoctors } from "../../../features/doctors/api/get-all-doctors";
-import {BaseTypeForPagination} from '../../utilForFeatures/basePropForPagination';
-
+import { BaseTypeForPagination } from "../../utilForFeatures/basePropForPagination";
+import { notifications } from "@mantine/notifications";
+import { FaEdit, FaExclamationCircle } from "react-icons/fa";
 
 interface UpdatePatientProps {
   patient: IPatient;
@@ -59,7 +59,29 @@ const UpdatePatient: React.FC<UpdatePatientProps> = ({
       doctors: data.doctors.map((doctor) => doctor._id),
     };
 
-    mutation.mutate(transformedData as any);
+    mutation.mutate(transformedData, {
+      onSuccess: () => {
+        notifications.show({
+          title: "Success",
+          message: "patient updated successfully",
+          color: "green",
+          autoClose: 3000,
+          icon: <FaEdit size={20} />,
+          withCloseButton: true,
+        });
+      },
+      onError: (error) => {
+        notifications.show({
+          title: "Fail",
+          message: "patient not saved successfully",
+          color: "red",
+          autoClose: 3000,
+          icon: <FaExclamationCircle size={20} />,
+          withCloseButton: true,
+        });
+        console.error("Failed to update patient", error);
+      },
+    });
     closeModal();
   };
 

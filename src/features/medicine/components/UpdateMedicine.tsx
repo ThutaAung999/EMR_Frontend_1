@@ -7,6 +7,8 @@ import { IMedicine, IMedicineDTO } from "../model/IMedicine";
 import {useGetDiseases1} from "../../../features/diseases/api/get-all-diseases";
 import { IDisease } from "../../diseases/model/IDisease";
 import {BaseTypeForPagination} from "../../utilForFeatures/basePropForPagination";
+import { FaEdit, FaExclamationCircle } from "react-icons/fa";
+import { notifications } from "@mantine/notifications";
 
 
 interface UpdateMedicineProps {
@@ -47,7 +49,34 @@ const UpdateMedicine: React.FC<UpdateMedicineProps> = ({
       diseases: data.diseases,
     };
 
-    mutation.mutate(transformedData);
+    mutation.mutate(transformedData,{
+      onSuccess: () => {
+        //closeModal();
+
+        notifications.show({
+          title: "Success",
+          message: "EMR updated successfully",
+          color: "green",
+          autoClose: 3000,
+          icon: <FaEdit size={20} />,
+          withCloseButton: true,
+        });
+      },
+      onError: (error) => {
+        //closeModal();
+        
+        notifications.show({            
+          title: 'Fail',
+          message: 'Disease not saved successfully',
+          color: 'red',
+          autoClose: 3000,
+          icon: <FaExclamationCircle  size={20} />,                        
+          withCloseButton: true,
+        })
+        console.error("Failed to update disease", error);
+
+      },
+    });
     closeModal();
   };
 

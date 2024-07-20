@@ -5,6 +5,8 @@ import { useDisclosure } from "@mantine/hooks";
 import { useCreateTag } from "../api/create-tag";
 import { ITagDTO } from "../model/ITag";
 import { AiOutlineTag } from "react-icons/ai";
+import { FaExclamationCircle, FaSave } from "react-icons/fa";
+import { notifications } from "@mantine/notifications";
 
 export const CreateTag: React.FC = () => {
   const {
@@ -29,11 +31,26 @@ export const CreateTag: React.FC = () => {
     mutation.mutate(data, {
       onSuccess: () => {
         console.log("Mutation success, closing modal.");
-        close();
-        reset();
+        notifications.show({
+          title: "Success",
+          message: "Tag Saved successfully",
+          color: "green",
+          autoClose: 3000,
+          icon: <FaSave size={20} />,
+          withCloseButton: true,
+        });
+      /*   close();
+        reset(); */
       },
-      onError: (error: any) => {
-        console.error("Mutation error:", error);
+      onError: () => {
+        notifications.show({            
+          title: 'Fail',
+          message: 'Tag not saved successfully',
+          color: 'red',
+          autoClose: 3000,
+          icon: <FaExclamationCircle  size={20} />,                        
+          withCloseButton: true,
+        })
       },
     });
   };

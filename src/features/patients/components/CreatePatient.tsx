@@ -1,7 +1,7 @@
 
 import React from "react";
 import { useForm, Controller } from "react-hook-form";
-import { FaUserFriends } from "react-icons/fa";
+import { FaCheck, FaExclamationCircle, FaUserFriends } from "react-icons/fa";
 import {
   Button,
   TextInput,
@@ -18,6 +18,7 @@ import { IPatientDTO } from "../model/IPatient";
 import { useGetDiseases1} from "../../diseases/api/get-all-diseases";
 import { useGetDoctors } from "../../doctors/api/get-all-doctors";
 import {BaseTypeForPagination} from '../../utilForFeatures/basePropForPagination';
+import { notifications } from "@mantine/notifications";
 
 
 const CreatePatient: React.FC = () => {
@@ -59,7 +60,28 @@ const CreatePatient: React.FC = () => {
   } = useGetDoctors();
 
   const onSubmit = (data: IPatientDTO) => {
-    mutation.mutate(data);
+    mutation.mutate(data,{
+      onSuccess: () =>{
+        notifications.show({            
+          title: 'Success',
+          message: 'Disease saved successfully :',
+          color: 'green',
+          autoClose: 3000,
+          icon: <FaCheck size={20} />,                        
+          withCloseButton: true,          
+        })
+      },
+      onError: () =>{
+        notifications.show({            
+          title: 'Fail',
+          message: 'Disease not saved successfully',
+          color: 'red',
+          autoClose: 3000,
+          icon: <FaExclamationCircle  size={20} />,                        
+          withCloseButton: true,
+        })
+      }
+    });
   };
 
   const [opened, { open, close }] = useDisclosure(false);

@@ -1,9 +1,10 @@
 import React, { useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Button, TextInput, Stack, Modal } from "@mantine/core";
-
 import { useUpdateTag } from "../api/update-tag";
 import { ITag } from "../model/ITag";
+import { notifications } from "@mantine/notifications";
+import { FaEdit, FaExclamationCircle } from "react-icons/fa";
 
 interface UpdateTagProps {
   tag: ITag;
@@ -31,8 +32,31 @@ export const UpdateTag: React.FC<UpdateTagProps> = ({
     const transformedData = {
       ...data,
     };
-    mutation.mutate(transformedData);
-    closeModal();
+    mutation.mutate(transformedData, {
+      onSuccess: () => {
+        notifications.show({
+          title: "Success",
+          message: "Tag updated successfully",
+          color: "green",
+          autoClose: 3000,
+          icon: <FaEdit size={20} />,
+          withCloseButton: true,
+        });
+        closeModal();
+      },
+      onError: (error) => {
+        console.error("Failed to update Tag", error);
+        notifications.show({
+          title: "Fail",
+          message: "Tag not saved successfully",
+          color: "red",
+          autoClose: 3000,
+          icon: <FaExclamationCircle size={20} />,
+          withCloseButton: true,
+        });
+        closeModal();
+      },
+    });
   };
 
   useEffect(() => {
@@ -57,7 +81,6 @@ export const UpdateTag: React.FC<UpdateTagProps> = ({
             )}
           />
 
-          
           <div className="flex flex-row gap-6 justify-end">
             <Button onClick={closeModal}>Cancel</Button>
             <Button type="submit">Save Changes</Button>
@@ -67,5 +90,3 @@ export const UpdateTag: React.FC<UpdateTagProps> = ({
     </Modal>
   );
 };
-
-

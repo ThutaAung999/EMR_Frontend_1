@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Button, MultiSelect, Stack, Textarea, Modal } from "@mantine/core";
-import { FaPlus, FaTimes } from "react-icons/fa";
+import { FaEdit, FaExclamationCircle, FaPlus, FaTimes } from "react-icons/fa";
 import axios from "axios";
 
 import { IEmrDTO, EmrImage } from "../model/emr.model";
@@ -13,6 +13,7 @@ import { useGetTags1 } from "../../tags/api/get-all-tags";
 import { useGetMedicines1 } from "../../medicine/api/get-all-medicines";
 
 import { BaseTypeForPagination } from "../../utilForFeatures/basePropForPagination";
+import { notifications } from "@mantine/notifications";
 
 export interface UpdateEmrProps {
   emr: IEmrDTO;
@@ -107,8 +108,32 @@ const UpdateEmr: React.FC<UpdateEmrProps> = ({ emr, closeModal }) => {
 
   const onSubmit = (data: IEmrDTO) => {
     data.emrImages = uploadedImages;
-    mutation.mutate(data);
-    closeModal();
+    mutation.mutate(data,{
+      onSuccess: () => {
+        closeModal();
+        
+        notifications.show({
+          title: "Success",
+          message: "EMR updated successfully",
+          color: "green",
+          autoClose: 3000,
+          icon: <FaEdit size={20} />,
+          withCloseButton: true,
+        });
+      },
+      onError: (error) => {
+        closeModal();notifications.show({            
+          title: 'Fail',
+          message: 'Disease not saved successfully',
+          color: 'red',
+          autoClose: 3000,
+          icon: <FaExclamationCircle  size={20} />,                        
+          withCloseButton: true,
+        })
+        console.error("Failed to update disease", error);
+
+      },
+    });
   };
 
   useEffect(() => {

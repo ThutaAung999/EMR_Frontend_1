@@ -1,30 +1,25 @@
-import React, { useState, useRef } from "react";
-import {
-  Button,
-  MultiSelect,
-  Stack,
-  Textarea,
-  Modal,
-  Loader,
-} from "@mantine/core";
+import React, { useState } from "react";
+import { Button, Stack, Loader } from "@mantine/core";
 import { Controller, useForm } from "react-hook-form";
-import { FaPlus, FaTimes } from "react-icons/fa";
+import { FaCheck, FaExclamationCircle, FaPlus } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { IEmrDTO } from "../model/emr.model";
 import { useCreateEmr } from "../api/create-emr";
-
 import { useGetDiseases1 } from "../../diseases/api/get-all-diseases";
 import { useGetMedicines1 } from "../../medicine/api/get-all-medicines";
 import useGetPatients1 from "../../patients/api/get-all-patients";
 import { useGetTags1 } from "../../tags/api/get-all-tags";
-
-
 import { useImageUpload } from "./customHooks/fileUpload";
 import { BaseTypeForPagination } from "../../utilForFeatures/basePropForPagination";
+import ImageUploadModal from "./ImageUploadModal";
+import UploadedImages from "./UploadedImages";
+import FormFields from "./FormFields";
+import LoadingError from "./LoadingError";
 import { IDisease } from "../../diseases/model/IDisease";
 import { IPatient } from "../../patients/model/IPatient";
 import { IMedicine } from "../../medicine/model/IMedicine";
 import { ITag } from "../../tags/model/ITag";
+import { notifications } from "@mantine/notifications";
 
 const CreateEmr: React.FC = () => {
   const {
@@ -43,8 +38,6 @@ const CreateEmr: React.FC = () => {
   });
 
   const navigate = useNavigate();
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
-
   const defaultQuery: BaseTypeForPagination = { page: 1, limit: 100 };
 
   const {
@@ -95,7 +88,28 @@ const CreateEmr: React.FC = () => {
 
   const onSubmit = (data: IEmrDTO) => {
     data.emrImages = uploadedImages;
-    mutation.mutate(data);
+    mutation.mutate(data,{
+      onSuccess: () =>{
+        notifications.show({            
+          title: 'Success',
+          message: 'EMR saved successfully :',
+          color: 'green',
+          autoClose: 3000,
+          icon: <FaCheck size={20} />,                        
+          withCloseButton: true,          
+        })
+      },
+      onError: () =>{
+        notifications.show({            
+          title: 'Fail',
+          message: 'EMR not saved successfully',
+          color: 'red',
+          autoClose: 3000,
+          icon: <FaExclamationCircle  size={20} />,                        
+          withCloseButton: true,
+        })
+      }
+    });
   };
 
   const handleModalClose = () => {
@@ -105,9 +119,10 @@ const CreateEmr: React.FC = () => {
   };
 
   if (diseaseIsLoading || medicineIsLoading || patientIsLoading || tagIsLoading)
-    return <div>Loading...</div>;
+    return <LoadingError loading={true} />;
+
   if (diseaseError || medicineError || patientError || tagError)
-    return <div>Error</div>;
+    return <LoadingError error={true} />;
 
   const diseaseOptions =
     diseases?.data?.map((disease: IDisease) => ({
@@ -147,90 +162,19 @@ const CreateEmr: React.FC = () => {
                   >
                     Add Item
                   </Button>
-                  <div className="mt-2 flex flex-row items-center w-30 h-30 rounded-full ms-4">
-                    {uploadedImages.map((image, index) => (
-                      <div key={index} className="relative">
-                        <img
-                          src={`http://localhost:9999/${image.image}`}
-                          alt="Uploaded"
-                          className="w-24 h-24 rounded-full"
-                          style={{ margin: "10px" }}
-                        />
-                        <button
-                          type="button"
-                          className="absolute top-0 right-0"
-                          onClick={() => removeImage(index)}
-                        >
-                          <FaTimes />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
+                  <UploadedImages
+                    images={uploadedImages}
+                    removeImage={removeImage}
+                  />
                 </div>
               )}
             />
-            <Controller
-              name="diseases"
+            <FormFields
               control={control}
-              render={({ field }) => (
-                <MultiSelect
-                  data={diseaseOptions}
-                  label="Diseases"
-                  placeholder="Select diseases"
-                  value={field.value}
-                  onChange={(values) => field.onChange(values)}
-                  error={
-                    errors.diseases && "Please select at least one disease"
-                  }
-                />
-              )}
-            />
-            <Controller
-              name="medicines"
-              control={control}
-              render={({ field }) => (
-                <MultiSelect
-                  data={medicineOptions}
-                  label="Medicine"
-                  placeholder="Select medicine"
-                  value={field.value}
-                  onChange={(values) => field.onChange(values)}
-                  error={
-                    errors.medicines && "Please select at least one medicine"
-                  }
-                />
-              )}
-            />
-            <Controller
-              name="patients"
-              control={control}
-              render={({ field }) => (
-                <MultiSelect
-                  data={patientOptions}
-                  label="Patient"
-                  placeholder="Select patients"
-                  value={field.value}
-                  onChange={(values) => field.onChange(values)}
-                  error={
-                    errors.patients && "Please select at least one patient"
-                  }
-                />
-              )}
-            />
-            <Controller
-              name="notes"
-              control={control}
-              render={({ field }) => (
-                <Textarea
-                  label="Note :"
-                  autosize
-                  minRows={2}
-                  maxRows={4}
-                  placeholder="Enter your notes"
-                  {...field}
-                  error={errors.notes?.message}
-                />
-              )}
+              errors={errors}
+              diseaseOptions={diseaseOptions}
+              medicineOptions={medicineOptions}
+              patientOptions={patientOptions}
             />
             <div className="flex flex-row gap-6 justify-end">
               <Button
@@ -250,50 +194,17 @@ const CreateEmr: React.FC = () => {
           </Stack>
         </form>
       </div>
-      <Modal
+      <ImageUploadModal
         opened={modalOpen}
         onClose={handleModalClose}
-        title="Upload Image and Tags"
-      >
-        <Stack>
-          <Button onClick={() => fileInputRef.current?.click()}>
-            Add Photo
-          </Button>
-          <input
-            type="file"
-            multiple
-            ref={fileInputRef}
-            style={{ display: "none" }}
-            onChange={(e) => handleImageSelect(e.target.files)}
-          />
-          <div className="mt-4 flex flex-row flex-wrap gap-4">
-            {selectedFiles.map((file, index) => (
-              <img
-                key={index}
-                src={URL.createObjectURL(file)}
-                alt="Selected"
-                className="w-48 h-48"
-              />
-            ))}
-          </div>
-          <MultiSelect
-            data={tagsOptions}
-            label="Tags"
-            placeholder="Select tags"
-            value={selectedTags}
-            maxDropdownHeight={150}
-            onChange={setSelectedTags}
-          />
-          <div className="flex flex-row gap-6 justify-end mt-4">
-            <Button onClick={handleModalClose} disabled={mutation.isPending}>
-              Cancel
-            </Button>
-            <Button onClick={handleImageUpload} disabled={mutation.isPending}>
-              {mutation.isPending ? <Loader size="sm" color="white" /> : "Save"}
-            </Button>
-          </div>
-        </Stack>
-      </Modal>
+        tagsOptions={tagsOptions}
+        selectedFiles={selectedFiles}
+        handleImageSelect={handleImageSelect}
+        selectedTags={selectedTags}
+        setSelectedTags={setSelectedTags}
+        handleImageUpload={handleImageUpload}
+        mutationPending={mutation.isPending}
+      />
     </section>
   );
 };

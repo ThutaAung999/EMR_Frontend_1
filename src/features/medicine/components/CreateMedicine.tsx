@@ -7,6 +7,8 @@
   import { useGetDiseases1 } from "../../diseases/api/get-all-diseases";
   import { GiPillDrop } from "react-icons/gi";
   import {BaseTypeForPagination} from "../../utilForFeatures/basePropForPagination";
+import { notifications } from "@mantine/notifications";
+import { FaCheck, FaExclamationCircle } from "react-icons/fa";
 
   const CreateMedicine: React.FC = () => {
     const {
@@ -28,7 +30,29 @@
     });
 
     const onSubmit = (data: IMedicineDTO) => {
-      mutation.mutate(data);
+      mutation.mutate(data,{
+        onSuccess: () =>{
+          notifications.show({            
+            title: 'Success',
+            message: 'Midicine saved successfully :',
+            color: 'green',
+            autoClose: 3000,
+            icon: <FaCheck size={20} />,                        
+            withCloseButton: true,          
+          })
+        },
+        onError: () =>{
+          notifications.show({            
+            title: 'Fail',
+            message: 'Medicine not saved successfully',
+            color: 'red',
+            autoClose: 3000,
+            icon: <FaExclamationCircle  size={20} />,                        
+            withCloseButton: true,
+          })
+        }
+      });
+
     };
 
     const [opened, { open, close }] = useDisclosure(false);
