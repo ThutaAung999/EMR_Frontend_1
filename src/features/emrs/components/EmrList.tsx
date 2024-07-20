@@ -5,7 +5,7 @@ import { useDeleteEmr } from "../api/delete-emr";
 import { ConfirmDialog } from "../../../components/reusable-components/ConfirmDialog";
 import { NavLink } from "react-router-dom";
 
-import { IEmr, IEmrDTO } from "../model/emr.model"; // Import IEmrDTO
+import { IEmr, IEmrDTO } from "../model/emr.model";
 import { IconEdit, IconTrash } from "@tabler/icons-react";
 
 import useGetEmrs from "../api/get-all-emrs";
@@ -163,16 +163,14 @@ export const EmrList: React.FC = () => {
       );
     }) || [];
 
-
-    if (updateModalOpen && selectedEmr) {
-      return (
-        <UpdateEmr
-          emr={transformToDTO(selectedEmr)} // Transform to IEmrDTO
-          closeModal={() => setUpdateModalOpen(false)}
-        />
-      );
-    }
-  
+  if (updateModalOpen && selectedEmr) {
+    return (
+      <UpdateEmr
+        emr={transformToDTO(selectedEmr)} // Transform to IEmrDTO
+        closeModal={() => setUpdateModalOpen(false)}
+      />
+    );
+  }
 
   //--------------------------------------------------------------------------------------------------------------------------------
 
@@ -203,16 +201,7 @@ export const EmrList: React.FC = () => {
                 onClick={() => handleSort("diseases.name")}
               >
                 <span className="flex">
-                  Name {getSortIcon("diseases.name")}
-                </span>
-              </th>
-
-              <th
-                className="py-2 px-4 cursor-pointer"
-                onClick={() => handleSort("medicines.name")}
-              >
-                <span className="flex">
-                  Name {getSortIcon("medicines.name")}
+                  Disease {getSortIcon("diseases.name")}
                 </span>
               </th>
 
@@ -221,9 +210,19 @@ export const EmrList: React.FC = () => {
                 onClick={() => handleSort("patients.name")}
               >
                 <span className="flex">
-                  Name {getSortIcon("patients.name")}
+                  Patient {getSortIcon("patients.name")}
                 </span>
               </th>
+
+              <th
+                className="py-2 px-4 cursor-pointer"
+                onClick={() => handleSort("medicines.name")}
+              >
+                <span className="flex">
+                  Medicine {getSortIcon("medicines.name")}
+                </span>
+              </th>
+
               <th className="py-2 px-4">Notes</th>
               <th className="py-2 px-4">Action</th>
             </tr>

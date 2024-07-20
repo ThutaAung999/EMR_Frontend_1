@@ -12,23 +12,20 @@ import { Controller, useForm } from "react-hook-form";
 
 import axios from "axios";
 import { FaPlus, FaTimes } from "react-icons/fa";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom";
 
 import { IEmrDTO, EmrImage } from "../model/emr.model";
 
 import { useCreateEmr } from "../api/create-emr";
-import {  useGetDiseases1} from "../../diseases/api/get-all-diseases";
+import { useGetDiseases1 } from "../../diseases/api/get-all-diseases";
 import { useGetMedicines1 } from "../../medicine/api/get-all-medicines";
 import useGetPatients1 from "../../patients/api/get-all-patients";
-import {useGetTags1}  from '../../tags/api/get-all-tags'
+import { useGetTags1 } from "../../tags/api/get-all-tags";
 
-
-
-import {BaseTypeForPagination} from '../../utilForFeatures/basePropForPagination';
-
+import { BaseTypeForPagination } from "../../utilForFeatures/basePropForPagination";
 
 const CreateEmr: React.FC = () => {
- // const apiUrl = import.meta.env.VITE_API_URL;
+  // const apiUrl = import.meta.env.VITE_API_URL;
 
   const {
     control,
@@ -45,12 +42,12 @@ const CreateEmr: React.FC = () => {
     },
   });
 
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   //const { data: emrs, error, isLoading } = useGetEmrs();
- 
+
   const defaultQuery: BaseTypeForPagination = {
     page: 1,
     limit: 100,
@@ -73,7 +70,11 @@ const CreateEmr: React.FC = () => {
     isLoading: patientIsLoading,
   } = useGetPatients1(defaultQuery);
 
-  const { data: tags, error: tagError, isLoading: tagIsLoading } = useGetTags1(defaultQuery);
+  const {
+    data: tags,
+    error: tagError,
+    isLoading: tagIsLoading,
+  } = useGetTags1(defaultQuery);
 
   const mutation = useCreateEmr(() => {
     reset();
@@ -108,7 +109,7 @@ const CreateEmr: React.FC = () => {
       const res = await axios.post(
         "http://localhost:9999/api/emrs/uploads",
         //"https://emr-backend-intz.onrender.com/api/emrs/uploads",
-       // apiUrl + "api/emrs/uploads",
+        // apiUrl + "api/emrs/uploads",
         formData,
         {
           headers: {
@@ -143,56 +144,45 @@ const CreateEmr: React.FC = () => {
     data.emrImages = uploadedImages;
     mutation.mutate(data);
   };
+  const handleModalClose = () => {
+    setModalOpen(false);
+    setSelectedFiles([]);
+    setSelectedTags([]);
+  };
 
-  if (   
-    diseaseIsLoading ||
-    medicineIsLoading ||
-    patientIsLoading ||
-    tagIsLoading
-  )
+  if (diseaseIsLoading || medicineIsLoading || patientIsLoading || tagIsLoading)
     return <div>Loading...</div>;
-  if ( diseaseError || medicineError || patientError || tagError)
+  if (diseaseError || medicineError || patientError || tagError)
     return <div>Error</div>;
 
-  const diseaseOnlyData = diseases?.data;
-
   const diseaseOptions =
-    Array.isArray(diseaseOnlyData) &&
-      diseaseOnlyData?.filter(
-        (disease, index, self) =>
-          disease &&
-          disease._id &&
-          self.findIndex((d) => d?._id === disease._id) === index
-      )
-      .map((disease) => ({ value: disease._id, label: disease.name })) || [];
+    (Array.isArray(diseases?.data) &&
+      diseases?.data.map((disease) => ({
+        value: disease._id,
+        label: disease.name,
+      }))) ||
+    [];
 
   const patientOptions =
-    patients?.data
-      ?.filter(
-        (patient, index, self) =>
-          patient &&
-          patient._id &&
-          self.findIndex((d) => d?._id === patient._id) === index
-      )
-      .map((patient) => ({ value: patient._id, label: patient.name })) || [];
+    (Array.isArray(patients?.data) &&
+      patients?.data?.map((patient) => ({
+        value: patient._id,
+        label: patient.name,
+      }))) ||
+    [];
 
   const medicineOptions =
-    medicines?.data
-      ?.filter(
-        (medicine, index, self) =>
-          medicine &&
-          medicine._id &&
-          self.findIndex((d) => d?._id === medicine._id) === index
-      )
-      .map((medicine) => ({ value: medicine._id, label: medicine.name })) || [];
+    (Array.isArray(medicines?.data) &&
+      medicines?.data?.map((medicine) => ({
+        value: medicine._id,
+        label: medicine.name,
+      }))) ||
+    [];
 
   const tagsOptions =
-    tags.data
-      ?.filter(
-        (tag, index, self) =>
-          tag && tag._id && self.findIndex((t) => t?._id === tag._id) === index
-      )
-      .map((tag) => ({ value: tag._id, label: tag.name })) || [];
+    (Array.isArray(tags?.data) &&
+      tags?.data?.map((tag) => ({ value: tag._id, label: tag.name }))) ||
+    [];
 
   return (
     <section className="h-full w-full">
@@ -220,8 +210,8 @@ const CreateEmr: React.FC = () => {
                       <div key={index} className="relative">
                         <img
                           //src={`https://emr-backend-intz.onrender.com/${image.image}`}
-                          src={`http://localhost:9999/${image.image}`} 
-                         // src={apiUrl + `${image.image}`}
+                          src={`http://localhost:9999/${image.image}`}
+                          // src={apiUrl + `${image.image}`}
                           alt="Uploaded"
                           className="w-24 h-24 rounded-full"
                           style={{ margin: "10px" }}
@@ -328,7 +318,7 @@ const CreateEmr: React.FC = () => {
 
       <Modal
         opened={modalOpen}
-        onClose={() => setModalOpen(false)}
+        onClose={handleModalClose}
         title="Upload Image and Tags"
       >
         <Stack>
@@ -362,10 +352,7 @@ const CreateEmr: React.FC = () => {
             /*     styles={dropdownStyles} */
           />
           <div className="flex flex-row gap-6 justify-end mt-4">
-            <Button
-              onClick={() => setModalOpen(false)}
-              disabled={mutation.isPending}
-            >
+            <Button onClick={handleModalClose} disabled={mutation.isPending}>
               Cancel
             </Button>
             <Button onClick={handleImageUpload} disabled={mutation.isPending}>

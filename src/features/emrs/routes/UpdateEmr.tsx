@@ -140,6 +140,12 @@ const UpdateEmr: React.FC<UpdateEmrProps> = ({ emr, closeModal }) => {
   const tagsOptions =
     tags?.data.map((tag) => ({ value: tag._id, label: tag.name })) || [];
 
+  const handleModalClose = () => {
+    setModalOpen(false);
+    setSelectedFiles([]);
+    setSelectedTags([]);
+  };
+
   return (
     <div className="h-screen w-full">
       <form
@@ -257,7 +263,7 @@ const UpdateEmr: React.FC<UpdateEmrProps> = ({ emr, closeModal }) => {
 
       <Modal
         opened={modalOpen}
-        onClose={() => setModalOpen(false)}
+        onClose={handleModalClose}
         title="Upload Image and Add Tags"
       >
         <Stack>
@@ -289,7 +295,7 @@ const UpdateEmr: React.FC<UpdateEmrProps> = ({ emr, closeModal }) => {
             onChange={setSelectedTags}
           />
           <div className="flex flex-row gap-6 justify-end mt-4">
-            <Button onClick={() => setModalOpen(false)}>Cancel</Button>
+            <Button onClick={handleModalClose}>Cancel</Button>
             <Button onClick={handleImageUpload}>Save Changes</Button>
           </div>
         </Stack>
