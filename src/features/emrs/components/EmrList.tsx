@@ -130,7 +130,9 @@ export const EmrList: React.FC = () => {
     if (initialLoading) {
       return <p>Loading...</p>;
     }
-  
+  if(searching){
+    console.log("Searching...");
+  }
 
   //-----------------------------------------------------------
   const transformToDTO = (emr: IEmr): IEmrDTO => {
