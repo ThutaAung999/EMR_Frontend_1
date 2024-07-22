@@ -34,3 +34,5 @@ const UploadedImages: React.FC<UploadedImagesProps> = ({
 };
 
 export default UploadedImages;
+
+

@@ -1,7 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { IEmr } from "../model/emr.model";
 
-// DELETE hook (delete patient in api)
 export function useDeleteEmr() {
     const queryClient = useQueryClient();
     return useMutation({

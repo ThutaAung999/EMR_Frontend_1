@@ -1,22 +1,22 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Button, Table } from "@mantine/core";
+import { NavLink } from "react-router-dom";
+import { IconEdit, IconTrash } from "@tabler/icons-react";
+import { GiMedicalPack } from "react-icons/gi";
+import { FiChevronDown, FiChevronRight, FiChevronUp } from "react-icons/fi";
+import { notifications } from "@mantine/notifications";
+
 
 import { useDeleteEmr } from "../api/delete-emr";
-import { ConfirmDialog } from "../../../components/reusable-components/ConfirmDialog";
-import { NavLink } from "react-router-dom";
-
-import { IEmr, IEmrDTO } from "../model/emr.model";
-import { IconEdit, IconTrash } from "@tabler/icons-react";
-
 import useGetEmrs from "../api/get-all-emrs";
-
-import { GiMedicalPack } from "react-icons/gi";
 import useDebounce from "../../sharedHooks/debounce.hook";
-import { notifications } from "@mantine/notifications";
-import SearchInput from "../../../components/reusable-components/SearchInput";
-import { FiChevronDown, FiChevronRight, FiChevronUp } from "react-icons/fi";
-import Pagination1 from "../../../components/reusable-components/Patination1";
 import UpdateEmr from "../routes/UpdateEmr";
+
+import { ConfirmDialog } from "../../../components/reusable-components/ConfirmDialog";
+import { IEmr, IEmrDTO } from "../model/emr.model";
+import SearchInput from "../../../components/reusable-components/SearchInput";
+import Pagination1 from "../../../components/reusable-components/Patination1";
+
 
 export const EmrList: React.FC = () => {
   const [page, setPage] = useState(1);
@@ -24,6 +24,11 @@ export const EmrList: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<string | undefined>();
   const [sortOrder, setSortOrder] = useState<"asc" | "desc" | undefined>();
+
+  const [initialLoading, setInitialLoading] = useState(true);
+  const [searching, setSearching] = useState(false);
+
+
 
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
   const query = {
@@ -34,7 +39,7 @@ export const EmrList: React.FC = () => {
     sortOrder,
   };
 
-  const { data: emrs, error, isLoading, refetch } = useGetEmrs(query);
+  const { data: emrs, error, refetch } = useGetEmrs(query);
 
   const mutationDelete = useDeleteEmr();
 
@@ -91,12 +96,16 @@ export const EmrList: React.FC = () => {
     (e: React.ChangeEvent<HTMLInputElement>) => {
       setSearchQuery(e.target.value);
       setPage(1);
+      setSearching(true);
     },
     []
   );
 
   useEffect(() => {
-    refetch();
+    refetch().then(() =>{
+      setSearching(false);
+      setInitialLoading(false);
+    });
   }, [page, limit, debouncedSearchQuery, sortBy, sortOrder, refetch]);
 
   const getSortIcon = (column: string) => {
@@ -113,9 +122,15 @@ export const EmrList: React.FC = () => {
   if (error) {
     return <p>Error fetching emr data: {error.message}</p>;
   }
-  if (isLoading) {
+  /* if (isLoading) {
     return <p>Loading...</p>;
-  }
+  } */
+
+
+    if (initialLoading) {
+      return <p>Loading...</p>;
+    }
+  
 
   //-----------------------------------------------------------
   const transformToDTO = (emr: IEmr): IEmrDTO => {

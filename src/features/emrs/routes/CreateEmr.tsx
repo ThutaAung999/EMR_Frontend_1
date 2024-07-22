@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Button, Stack, Loader } from "@mantine/core";
 import { Controller, useForm } from "react-hook-form";
 import { FaCheck, FaExclamationCircle, FaPlus } from "react-icons/fa";
+import { notifications } from "@mantine/notifications";
+
 import { useNavigate } from "react-router-dom";
 import { IEmrDTO } from "../model/emr.model";
 import { useCreateEmr } from "../api/create-emr";
@@ -19,7 +21,7 @@ import { IDisease } from "../../diseases/model/IDisease";
 import { IPatient } from "../../patients/model/IPatient";
 import { IMedicine } from "../../medicine/model/IMedicine";
 import { ITag } from "../../tags/model/ITag";
-import { notifications } from "@mantine/notifications";
+
 
 const CreateEmr: React.FC = () => {
   const {

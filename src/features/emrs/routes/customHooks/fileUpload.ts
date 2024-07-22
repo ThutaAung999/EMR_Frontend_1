@@ -3,7 +3,9 @@ import axios from 'axios';
 import { EmrImage } from '../../model/emr.model';
 
 export const useImageUpload = () => {
+  
   const [uploadedImages, setUploadedImages] = useState<EmrImage[]>([]);
+
 
   const uploadImages = async (files: File[], tags: string[]) => {
     const formData = new FormData();
@@ -21,6 +23,7 @@ export const useImageUpload = () => {
 
     setUploadedImages(prev => [...prev, ...newImages]);
   };
+
 
   const removeImage = (index: number) => {
     setUploadedImages(prev => prev.filter((_, i) => i !== index));

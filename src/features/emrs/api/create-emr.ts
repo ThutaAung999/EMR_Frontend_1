@@ -5,7 +5,7 @@ export function useCreateEmr(onSuccessCallback?: () => void) {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: async (emr: IEmrDTO) => {
-            // Client-side validation (example)
+            // Client-side custom validations
             if (!emr.notes || 
                 !Array.isArray(emr.diseases) || 
                 !Array.isArray(emr.medicines) || 

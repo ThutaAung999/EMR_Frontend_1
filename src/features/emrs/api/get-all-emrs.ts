@@ -1,9 +1,7 @@
-//After updating
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import {BaseTypeForPagination} from '../../utilForFeatures/basePropForPagination';
 import { IEmr } from '../model/emr.model';
 
-// Function to fetch EMRs from the API
 export const fetchEmrs = async (query:BaseTypeForPagination): 
         Promise<
             {
@@ -43,7 +41,6 @@ interface CustomQueryOptions<TData, TError> extends UseQueryOptions<TData, TErro
   keepPreviousData?: boolean;
 }
 
-// Hook to get EMRs
 const useGetEmrs = (query: BaseTypeForPagination) => {
 
   return useQuery(
