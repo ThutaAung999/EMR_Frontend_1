@@ -6,7 +6,7 @@ const apiUrl = import.meta.env.VITE_API_URL;
 //const apiUrl ='https://emr-backend-intz.onrender.com'
 
 const instance = axios.create({
-    baseURL: apiUrl, // Set your backend's base URL here
+    baseURL: apiUrl  as string, // Set your backend's base URL
     
 });
 

@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import instance from '../../../utils/axios'; 
+import instance from '../api/axios';
 import { useForm } from '@mantine/form';
 import { TextInput, PasswordInput, Button, Paper, Title, Container } from '@mantine/core';
 import { Link, useNavigate } from 'react-router-dom';

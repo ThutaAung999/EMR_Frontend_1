@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import instance from "../../../utils/axios"; // Import the custom Axios instance
+import instance from "../api/axios"; // Import the custom Axios instance
 import { useForm } from "@mantine/form";
 import {
   TextInput,
@@ -14,7 +14,7 @@ import {
 } from "@mantine/core";
 import { IconCheck, IconX } from "@tabler/icons-react";
 import { AuthContext } from "../providers/AuthContext";
-import axios from "axios"; // Import Axios and AxiosError
+import axios from "axios"; 
 
 const Login: React.FC = () => {
   const { setAuth } = useContext(AuthContext)!;

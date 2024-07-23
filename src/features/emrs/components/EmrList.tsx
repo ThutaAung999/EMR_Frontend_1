@@ -6,7 +6,6 @@ import { GiMedicalPack } from "react-icons/gi";
 import { FiChevronDown, FiChevronRight, FiChevronUp } from "react-icons/fi";
 import { notifications } from "@mantine/notifications";
 
-
 import { useDeleteEmr } from "../api/delete-emr";
 import useGetEmrs from "../api/get-all-emrs";
 import useDebounce from "../../sharedHooks/debounce.hook";
@@ -16,7 +15,6 @@ import { ConfirmDialog } from "../../../components/reusable-components/ConfirmDi
 import { IEmr, IEmrDTO } from "../model/emr.model";
 import SearchInput from "../../../components/reusable-components/SearchInput";
 import Pagination1 from "../../../components/reusable-components/Patination1";
-
 
 export const EmrList: React.FC = () => {
   const [page, setPage] = useState(1);
@@ -28,7 +26,7 @@ export const EmrList: React.FC = () => {
   const [initialLoading, setInitialLoading] = useState(true);
   const [searching, setSearching] = useState(false);
 
-
+  //const [loadingButton, setLoadingButton] = useState(false);
 
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
   const query = {
@@ -102,7 +100,7 @@ export const EmrList: React.FC = () => {
   );
 
   useEffect(() => {
-    refetch().then(() =>{
+    refetch().then(() => {
       setSearching(false);
       setInitialLoading(false);
     });
@@ -126,11 +124,10 @@ export const EmrList: React.FC = () => {
     return <p>Loading...</p>;
   } */
 
-
-    if (initialLoading) {
-      return <p>Loading...</p>;
-    }
-  if(searching){
+  if (initialLoading) {
+    return <p>Loading...</p>;
+  }
+  if (searching) {
     console.log("Searching...");
   }
 
@@ -162,7 +159,7 @@ export const EmrList: React.FC = () => {
             {emrMedicines.map((medicine) => medicine.name).join(", ")}
           </td>
           <td className="py-2 px-4">{emr.notes}</td>
-          <td className="py-2 px-4 w-24 whitespace-nowrap flex gap-2">
+          <td className="py-2 px-4 w-24 whitespace-nowrap flex flex-col lg:flex-row gap-2">
             <Button
               className="text-white bg-red-600 hover:bg-red-500"
               onClick={() => handleDelete(emr._id)}

@@ -16,9 +16,8 @@ export const fetchTags1 = async (query:GetTagsQuery):
 Promise<{ data: ITag[]; total: number; page: number; totalPages: number }> => {
   console.log("fetchTags from frontend");
 
-  //const apiUrl = import.meta.env.VITE_API_URL;  
-  //const response = await fetch(apiUrl+"api/tags");
-
+  const apiUrl = import.meta.env.VITE_API_URL;  
+  
   //const response = await fetch("https://emr-backend-intz.onrender.com/api/tags");
   
   const params = new URLSearchParams(
@@ -30,8 +29,8 @@ Promise<{ data: ITag[]; total: number; page: number; totalPages: number }> => {
     }, {} as Record<string, string>)
   ).toString();
 
-
-  const response = await fetch(`http://localhost:9999/api/tags?${params}`);
+const response = await fetch(apiUrl+`api/tags?${params}`);
+  //const response = await fetch(`http://localhost:9999/api/tags?${params}`);
 
   if (!response.ok) {
     if (response.status === 429) {

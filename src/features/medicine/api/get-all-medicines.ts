@@ -21,13 +21,12 @@ const fetchMedicines1 = async (query: BaseTypeForPagination):
 
  // console.log('params :',params)
   
-  //const response = await fetch("https://emr-backend-intz.onrender.com/api/medicines");
-  /* const apiUrl = import.meta.env.VITE_API_URL; 
-  const response = await fetch(apiUrl+"api/medicines");
-   */
-  const response = await fetch(`http://localhost:9999/api/medicines?${params}`);
+  //const response = await fetch(`https://emr-backend-intz.onrender.com/api/medicines?${params}`);
+  const apiUrl = import.meta.env.VITE_API_URL; 
+  const response = await fetch(apiUrl+`api/medicines?${params}`);
   
-  
+  //const response = await fetch(`http://localhost:9999/api/medicines?${params}`);
+    
   if (!response.ok) {
     if (response.status === 429) {
       throw new Error("Rate limit exceeded");

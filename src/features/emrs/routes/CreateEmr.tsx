@@ -178,6 +178,7 @@ const CreateEmr: React.FC = () => {
               medicineOptions={medicineOptions}
               patientOptions={patientOptions}
             />
+           
             <div className="flex flex-row gap-6 justify-end">
               <Button
                 onClick={() => navigate("/emrs")}

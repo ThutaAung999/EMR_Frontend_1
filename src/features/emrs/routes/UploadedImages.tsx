@@ -6,6 +6,8 @@ interface UploadedImagesProps {
   removeImage: (index: number) => void;
 }
 
+const apiUrl = import.meta.env.VITE_API_URL;
+
 const UploadedImages: React.FC<UploadedImagesProps> = ({
   images,
   removeImage,
@@ -15,7 +17,9 @@ const UploadedImages: React.FC<UploadedImagesProps> = ({
       {images.map((image, index) => (
         <div key={index} className="relative">
           <img
-            src={`http://localhost:9999/${image.image}`}
+            //src={`http://localhost:9999/${image.image}`}
+            //src={`https://emr-backend-intz.onrender.com/${image.image}`}
+            src={apiUrl + `${image.image}`}
             alt="Uploaded"
             className="w-24 h-24 rounded-full"
             style={{ margin: "10px" }}

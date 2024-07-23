@@ -17,11 +17,10 @@ export function useCreateMedicine(onSuccessCallback?: () => void) {
       
     //const response = await fetch("https://emr-backend-intz.onrender.com/api/medicines", {
   
-/*     const apiUrl = import.meta.env.VITE_API_URL;  
+    const apiUrl = import.meta.env.VITE_API_URL;  
     const response = await fetch(apiUrl+"api/medicines", {
- */
                             
-    const response = await fetch(`http://localhost:9999/api/medicines`, {
+    //const response = await fetch(`http://localhost:9999/api/medicines`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

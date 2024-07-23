@@ -1,6 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
-import { Button, MultiSelect, Stack, Textarea, Modal } from "@mantine/core";
+import {
+  Button,
+  MultiSelect,
+  Stack,
+  Textarea,
+  Modal,
+  Loader,
+} from "@mantine/core";
 import { FaEdit, FaExclamationCircle, FaPlus, FaTimes } from "react-icons/fa";
 import axios from "axios";
 
@@ -21,7 +28,7 @@ export interface UpdateEmrProps {
 }
 
 const UpdateEmr: React.FC<UpdateEmrProps> = ({ emr, closeModal }) => {
-  //  const apiUrl = import.meta.env.VITE_API_URL;
+  const apiUrl = import.meta.env.VITE_API_URL;
   const {
     control,
     handleSubmit,
@@ -75,9 +82,9 @@ const UpdateEmr: React.FC<UpdateEmrProps> = ({ emr, closeModal }) => {
 
     try {
       const res = await axios.post(
-        "http://localhost:9999/api/emrs/uploads",
+        // "http://localhost:9999/api/emrs/uploads",
         //"https://emr-backend-intz.onrender.com/api/emrs/uploads",
-        //apiUrl + "api/emrs/uploads",
+        apiUrl + "api/emrs/uploads",
         formData,
         {
           headers: {
@@ -108,10 +115,10 @@ const UpdateEmr: React.FC<UpdateEmrProps> = ({ emr, closeModal }) => {
 
   const onSubmit = (data: IEmrDTO) => {
     data.emrImages = uploadedImages;
-    mutation.mutate(data,{
+    mutation.mutate(data, {
       onSuccess: () => {
         closeModal();
-        
+
         notifications.show({
           title: "Success",
           message: "EMR updated successfully",
@@ -122,16 +129,16 @@ const UpdateEmr: React.FC<UpdateEmrProps> = ({ emr, closeModal }) => {
         });
       },
       onError: (error) => {
-        closeModal();notifications.show({            
-          title: 'Fail',
-          message: 'Disease not saved successfully',
-          color: 'red',
+        closeModal();
+        notifications.show({
+          title: "Fail",
+          message: "Disease not saved successfully",
+          color: "red",
           autoClose: 3000,
-          icon: <FaExclamationCircle  size={20} />,                        
+          icon: <FaExclamationCircle size={20} />,
           withCloseButton: true,
-        })
+        });
         console.error("Failed to update disease", error);
-
       },
     });
   };
@@ -195,13 +202,12 @@ const UpdateEmr: React.FC<UpdateEmrProps> = ({ emr, closeModal }) => {
                   {uploadedImages.map((image, index) => (
                     <div key={index} className="relative ">
                       <img
-                        //src={`https://emr-backend-intz.onrender.com/${image.image}`}
-                        //src={apiUrl + `${image.image}`}
-                        src={`http://localhost:9999/${image.image}`}
+                        // src={`https://emr-backend-intz.onrender.com/${image.image}`}
+                        src={apiUrl + `${image.image}`}
+                        //src={`http://localhost:9999/${image.image}`}
                         alt="Uploaded"
                         className="w-24 h-24 rounded-full"
                         style={{ margin: "10px" }}
-                        
                       />
                       <button
                         type="button"
@@ -321,9 +327,19 @@ const UpdateEmr: React.FC<UpdateEmrProps> = ({ emr, closeModal }) => {
             value={selectedTags}
             onChange={setSelectedTags}
           />
+
+          
           <div className="flex flex-row gap-6 justify-end mt-4">
-            <Button onClick={handleModalClose}>Cancel</Button>
-            <Button onClick={handleImageUpload}>Save Changes</Button>
+            <Button onClick={handleModalClose} disabled={mutation.isPending}>
+              Cancel
+            </Button>
+            <Button onClick={handleImageUpload} disabled={mutation.isPending}>
+              {mutation.isPending ? (
+                <Loader size="sm" color="white" />
+              ) : (
+                "Save Changes"
+              )}
+            </Button>
           </div>
         </Stack>
       </Modal>

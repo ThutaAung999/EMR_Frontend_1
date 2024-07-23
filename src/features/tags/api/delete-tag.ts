@@ -6,12 +6,12 @@ export function useDeleteTag() {
     return useMutation({
       mutationFn: async (tagId: string) => {
     
-        //const apiUrl = import.meta.env.VITE_API_URL;  
+        const apiUrl = import.meta.env.VITE_API_URL;  
         
         const response = await fetch(          
-          `http://localhost:9999/api/tags/${tagId}`,
+          //`http://localhost:9999/api/tags/${tagId}`,
           //`https://emr-backend-intz.onrender.com/api/tags/${tagId}`,
-          //apiUrl+`api/tags/${tagId}`,
+          apiUrl+`api/tags/${tagId}`,
           {
             method: "DELETE",
           }

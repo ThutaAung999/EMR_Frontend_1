@@ -8,10 +8,11 @@ export function useDeleteMedicine() {
       mutationFn: async (medicineId: string) => {        
         
           //`https://emr-backend-intz.onrender.com/api/medicines/${medicineId}`,
-          /* const apiUrl = import.meta.env.VITE_API_URL;   
-          const response = await fetch(apiUrl+`api/medicines/${medicineId}`, */
+          
+          const apiUrl = import.meta.env.VITE_API_URL;   
+          const response = await fetch(apiUrl+`api/medicines/${medicineId}`,
             
-        const response = await fetch(`http://localhost:9999/api/medicines/${medicineId}`,
+        //const response = await fetch(`http://localhost:9999/api/medicines/${medicineId}`,
           {
             method: "DELETE",
           }

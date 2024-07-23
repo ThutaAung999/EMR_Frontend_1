@@ -125,7 +125,7 @@ export const PatientList: React.FC = () => {
         <td className="py-2 px-4">
           {patientDoctors.map((doctor) => doctor.name).join(", ")}
         </td>
-        <td className="py-2 px-4 w-24 whitespace-nowrap flex gap-2">
+        <td className="py-2 px-4 w-24 whitespace-nowrap flex flex-col lg:flex-row gap-2">
           <Button
             className="text-white bg-red-600 hover:bg-red-500"
             onClick={() => handleDelete(patient._id)}

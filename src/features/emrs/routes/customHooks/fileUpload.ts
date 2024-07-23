@@ -11,9 +11,18 @@ export const useImageUpload = () => {
     const formData = new FormData();
     files.forEach(file => formData.append('image', file));
 
-    const res = await axios.post('http://localhost:9999/api/emrs/uploads', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' }
-    });
+    const apiUrl = import.meta.env.VITE_API_URL;       
+    
+    //or
+    ////"https://emr-backend-intz.onrender.com/api/emrs/uploads",
+
+    const res = await axios.post(
+      //`http://localhost:9999/api/emrs/uploads`, 
+      apiUrl + "api/emrs/uploads",
+      formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+      }
+  );
 
     const { images } = res.data;
     const newImages = images.map((image: { image: string }) => ({

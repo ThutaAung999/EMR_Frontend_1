@@ -21,9 +21,9 @@ export function useCreatePatient(onSuccessCallback?: () => void) {
 
 
       //const response = await fetch('https://emr-backend-intz.onrender.com/api/patients', {
-      /* const apiUrl = import.meta.env.VITE_API_URL;
-            const response = await fetch(apiUrl+'api/patients', { */
-      const response = await fetch(`http://localhost:9999/api/patients`, {
+      const apiUrl = import.meta.env.VITE_API_URL;
+            const response = await fetch(apiUrl+'api/patients', {
+      //const response = await fetch(`http://localhost:9999/api/patients`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -1,6 +1,5 @@
-import React, { useRef } from "react";
-import { Button, Stack, Modal, MultiSelect, Loader } from "@mantine/core";
-//import { ITag } from "../../tags/model/ITag";
+import React, { useRef, useState, useEffect } from "react";
+import { Button, Stack, Modal, MultiSelect, Loader, Text } from "@mantine/core";
 
 interface ImageUploadModalProps {
   opened: boolean;
@@ -26,11 +25,41 @@ const ImageUploadModal: React.FC<ImageUploadModalProps> = ({
   mutationPending,
 }) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [tagError, setTagError] = useState("");
+
+  useEffect(() => {
+    if (!opened) {
+      setIsSubmitting(false);
+      setTagError("");
+    }
+  }, [opened]);
+
+  const handleSave = async () => {
+    if (selectedTags.length === 0) {
+      setTagError("Please select at least one tag.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    setTagError(""); // Clear error before attempting upload
+    await handleImageUpload();
+    onClose();
+  };
+
+  const handleTagChange = (tags: string[]) => {
+    setSelectedTags(tags);
+    if (tags.length > 0) {
+      setTagError("");
+    }
+  };
 
   return (
     <Modal opened={opened} onClose={onClose} title="Upload Image and Tags">
       <Stack>
-        <Button onClick={() => fileInputRef.current?.click()}>Add Photo</Button>
+        <Button onClick={() => fileInputRef.current?.click()} disabled={isSubmitting || mutationPending}>
+          Add Photo
+        </Button>
         <input
           type="file"
           multiple
@@ -54,14 +83,15 @@ const ImageUploadModal: React.FC<ImageUploadModalProps> = ({
           placeholder="Select tags"
           value={selectedTags}
           maxDropdownHeight={150}
-          onChange={setSelectedTags}
+          onChange={handleTagChange}
         />
+        {tagError && <Text color="red" size="sm">{tagError}</Text>}
         <div className="flex flex-row gap-6 justify-end mt-4">
-          <Button onClick={onClose} disabled={mutationPending}>
+          <Button onClick={onClose} disabled={isSubmitting || mutationPending}>
             Cancel
           </Button>
-          <Button onClick={handleImageUpload} disabled={mutationPending}>
-            {mutationPending ? <Loader size="sm" color="white" /> : "Save"}
+          <Button onClick={handleSave} disabled={isSubmitting || mutationPending}>
+            {isSubmitting || mutationPending ? <Loader size="sm" color="white" /> : "Save"}
           </Button>
         </div>
       </Stack>
@@ -70,5 +100,3 @@ const ImageUploadModal: React.FC<ImageUploadModalProps> = ({
 };
 
 export default ImageUploadModal;
-
-

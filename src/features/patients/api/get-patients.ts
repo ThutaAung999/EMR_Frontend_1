@@ -8,11 +8,11 @@ export const fetchPatients = async (): Promise<IPatient[]> => {
   
   
 
-  const response = await fetch('http://localhost:9999/api/patients');
+  //const response = await fetch('http://localhost:9999/api/patients');
   //const response = await fetch(`https://emr-backend-intz.onrender.com
 
-  /* const apiUrl = import.meta.env.VITE_API_URL;
-  const response = await fetch(apiUrl+`api/patients`); */
+  const apiUrl = import.meta.env.VITE_API_URL;
+  const response = await fetch(apiUrl+`api/patients`);
   
   if (!response.ok) {
     throw new Error('Network response was not ok');
