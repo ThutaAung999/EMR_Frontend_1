@@ -51,7 +51,7 @@ const Sidebar: React.FC<{
   useEffect(() => {
     const handleResize = () => {
       const width = window.innerWidth;
-      if (width <= 768) {
+      if (width <= 1180) {
         setIsExpanded(false);
       } else {
         setIsExpanded(true);
