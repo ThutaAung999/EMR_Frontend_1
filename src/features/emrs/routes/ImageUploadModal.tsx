@@ -12,8 +12,7 @@ interface ImageUploadModalProps {
   setSelectedTags: React.Dispatch<React.SetStateAction<string[]>>;
   handleImageUpload: () => Promise<void>;
   mutationPending: boolean;
-  setSelectedFiles: React.Dispatch<React.SetStateAction<File[]>>; 
-  
+  setSelectedFiles: React.Dispatch<React.SetStateAction<File[]>>;
 }
 
 const ImageUploadModal: React.FC<ImageUploadModalProps> = ({
@@ -27,17 +26,14 @@ const ImageUploadModal: React.FC<ImageUploadModalProps> = ({
   handleImageUpload,
   mutationPending,
   setSelectedFiles,
-  
 }) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [tagError, setTagError] = useState("");
 
-  
-
-const removeImage = (index: number) => {
-  setSelectedFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
-};
+  const removeImage = (index: number) => {
+    setSelectedFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
+  };
 
   useEffect(() => {
     if (!opened) {
@@ -65,11 +61,20 @@ const removeImage = (index: number) => {
     }
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    handleImageSelect(e.target.files);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
   return (
     <Modal opened={opened} onClose={onClose} title="Upload Image and Tags">
       <Stack>
-        <Button onClick={() => fileInputRef.current?.click()} 
-        disabled={isSubmitting || mutationPending}>
+        <Button
+          onClick={() => fileInputRef.current?.click()}
+          disabled={isSubmitting || mutationPending}
+        >
           Add Photo
         </Button>
         <input
@@ -77,7 +82,7 @@ const removeImage = (index: number) => {
           multiple
           ref={fileInputRef}
           style={{ display: "none" }}
-          onChange={(e) => handleImageSelect(e.target.files)}
+          onChange={handleFileChange}
         />
         <div className="mt-4 flex flex-row flex-wrap gap-4">
           {selectedFiles.map((file, index) => (
@@ -105,13 +110,24 @@ const removeImage = (index: number) => {
           maxDropdownHeight={150}
           onChange={handleTagChange}
         />
-        {tagError && <Text color="red" size="sm">{tagError}</Text>}
+        {tagError && (
+          <Text color="red" size="sm">
+            {tagError}
+          </Text>
+        )}
         <div className="flex flex-row gap-6 justify-end mt-4">
           <Button onClick={onClose} disabled={isSubmitting || mutationPending}>
             Cancel
           </Button>
-          <Button onClick={handleSave} disabled={isSubmitting || mutationPending}>
-            {isSubmitting || mutationPending ? <Loader size="sm" color="white" /> : "Save"}
+          <Button
+            onClick={handleSave}
+            disabled={isSubmitting || mutationPending}
+          >
+            {isSubmitting || mutationPending ? (
+              <Loader size="sm" color="white" />
+            ) : (
+              "Save"
+            )}
           </Button>
         </div>
       </Stack>
@@ -120,3 +136,4 @@ const removeImage = (index: number) => {
 };
 
 export default ImageUploadModal;
+  

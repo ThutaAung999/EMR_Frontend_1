@@ -69,6 +69,11 @@ const CreateEmr: React.FC = () => {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
+  const [mutationPending, setMutationPending] = useState(false);
+
+
+
+
   const mutation = useCreateEmr(() => {
     reset();
     setSelectedFiles([]);
@@ -82,10 +87,16 @@ const CreateEmr: React.FC = () => {
   };
 
   const handleImageUpload = async () => {
+    setMutationPending(true);
+
     await uploadImages(selectedFiles, selectedTags);
     setSelectedTags([]);
     setSelectedFiles([]);
     setModalOpen(false);
+
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    setMutationPending(false);
+
   };
 
   const onSubmit = (data: IEmrDTO) => {
@@ -206,8 +217,9 @@ const CreateEmr: React.FC = () => {
         selectedTags={selectedTags}
         setSelectedTags={setSelectedTags}
         handleImageUpload={handleImageUpload}
-        mutationPending={mutation.isPending}
-        setSelectedFiles={setSelectedFiles}                
+       // mutationPending={mutation.isPending}
+        setSelectedFiles={setSelectedFiles} 
+        mutationPending={mutationPending}               
       />
     </section>
   );
