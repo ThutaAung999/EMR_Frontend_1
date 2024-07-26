@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Button, Table } from "@mantine/core";
+import { Button, Table, Loader } from "@mantine/core";
 import { NavLink } from "react-router-dom";
 import { IconEdit, IconTrash } from "@tabler/icons-react";
 import { GiMedicalPack } from "react-icons/gi";
@@ -24,9 +24,7 @@ export const EmrList: React.FC = () => {
   const [sortOrder, setSortOrder] = useState<"asc" | "desc" | undefined>();
 
   const [initialLoading, setInitialLoading] = useState(true);
-  const [searching, setSearching] = useState(false);
-
-  //const [loadingButton, setLoadingButton] = useState(false);
+ 
 
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
   const query = {
@@ -37,7 +35,7 @@ export const EmrList: React.FC = () => {
     sortOrder,
   };
 
-  const { data: emrs, error, refetch } = useGetEmrs(query);
+  const { data: emrs, error, refetch, isFetching } = useGetEmrs(query); 
 
   const mutationDelete = useDeleteEmr();
 
@@ -70,7 +68,7 @@ export const EmrList: React.FC = () => {
           });
         },
         onError: (error) => {
-          console.error("Error deleting medicine:", error);
+          console.error("Error deleting EMR:", error);
         },
       });
     }
@@ -94,14 +92,14 @@ export const EmrList: React.FC = () => {
     (e: React.ChangeEvent<HTMLInputElement>) => {
       setSearchQuery(e.target.value);
       setPage(1);
-      setSearching(true);
+    
     },
     []
   );
 
   useEffect(() => {
     refetch().then(() => {
-      setSearching(false);
+    
       setInitialLoading(false);
     });
   }, [page, limit, debouncedSearchQuery, sortBy, sortOrder, refetch]);
@@ -118,20 +116,13 @@ export const EmrList: React.FC = () => {
   };
 
   if (error) {
-    return <p>Error fetching emr data: {error.message}</p>;
+    return <p>Error fetching EMR data: {error.message}</p>;
   }
-  /* if (isLoading) {
-    return <p>Loading...</p>;
-  } */
 
   if (initialLoading) {
     return <p>Loading...</p>;
   }
-  if (searching) {
-    console.log("Searching...");
-  }
 
-  //-----------------------------------------------------------
   const transformToDTO = (emr: IEmr): IEmrDTO => {
     return {
       ...emr,
@@ -146,7 +137,6 @@ export const EmrList: React.FC = () => {
       const emrDiseases = emr?.diseases ?? [];
       const emrPatients = emr?.patients ?? [];
       const emrMedicines = emr?.medicines ?? [];
-      //console.log('medicineDiseases :',medicineDiseases);
       return (
         <tr key={emr._id}>
           <td className="py-2 px-4">
@@ -180,7 +170,7 @@ export const EmrList: React.FC = () => {
   if (updateModalOpen && selectedEmr) {
     return (
       <UpdateEmr
-        emr={transformToDTO(selectedEmr)} // Transform to IEmrDTO
+        emr={transformToDTO(selectedEmr)}
         closeModal={() => setUpdateModalOpen(false)}
       />
     );
@@ -243,6 +233,14 @@ export const EmrList: React.FC = () => {
           </thead>
           <tbody>{rows}</tbody>
         </Table>
+
+        {isFetching ? (
+          <div className="flex justify-center my-4">
+            <Loader />
+          </div>
+        ) : rows.length === 0 ? (
+          <p className="text-center my-4">No data found</p>
+        ) : null}
 
         <div className="flex justify-between items-center mt-4">
           <div>

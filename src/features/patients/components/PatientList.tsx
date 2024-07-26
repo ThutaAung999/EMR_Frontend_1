@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Button, Table } from "@mantine/core";
+import { Button, Loader, Table } from "@mantine/core";
 import { IconEdit, IconTrash } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
 import { FiChevronDown, FiChevronRight, FiChevronUp } from "react-icons/fi";
@@ -32,14 +32,18 @@ export const PatientList: React.FC = () => {
     sortOrder,
   };
 
-  const { data: patients, error, isLoading, refetch } = useGetPatients1(query);
+  const { data: patients, error, isFetching, refetch } = useGetPatients1(query);
 
   const mutationDelete = useDeletePatient();
 
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const [selectedPatientId, setSelectedPatientId] = useState<string | null>(null);
+  const [selectedPatientId, setSelectedPatientId] = useState<string | null>(
+    null
+  );
   const [selectedPatient, setSelectedPatient] = useState<IPatient | null>(null);
   const [updateModalOpen, setUpdateModalOpen] = useState(false);
+
+  const [initialLoading, setInitialLoading] = useState(true);
 
   const handleDelete = useCallback((id: string) => {
     setSelectedPatientId(id);
@@ -94,7 +98,9 @@ export const PatientList: React.FC = () => {
   );
 
   useEffect(() => {
-    refetch();
+    refetch().then(() => {
+      setInitialLoading(false);
+    });
   }, [page, limit, debouncedSearchQuery, sortBy, sortOrder, refetch]);
 
   const getSortIcon = (column: string) => {
@@ -108,40 +114,43 @@ export const PatientList: React.FC = () => {
     return <FiChevronRight size={16} />;
   };
 
-  if (isLoading) return <div>Loading...</div>;
   if (error) return <div>An error occurred: {error.message}</div>;
+  if (initialLoading) {
+    return <p>Loading...</p>;
+  }
 
-  const rows = patients?.data?.map((patient) => {
-    const patientDiseases = patient?.diseases ?? [];
-    const patientDoctors = patient.doctors ?? [];
+  const rows =
+    patients?.data?.map((patient) => {
+      const patientDiseases = patient?.diseases ?? [];
+      const patientDoctors = patient.doctors ?? [];
 
-    return (
-      <tr key={patient._id}>
-        <td className="py-2 px-4">{patient.name}</td>
-        <td className="py-2 px-4">{patient.age}</td>
-        <td className="py-2 px-4">
-          {patientDiseases.map((disease) => disease.name).join(", ")}
-        </td>
-        <td className="py-2 px-4">
-          {patientDoctors.map((doctor) => doctor.name).join(", ")}
-        </td>
-        <td className="py-2 px-4 w-24 whitespace-nowrap flex flex-col lg:flex-row gap-2">
-          <Button
-            className="text-white bg-red-600 hover:bg-red-500"
-            onClick={() => handleDelete(patient._id)}
-          >
-            <IconTrash size={16} />
-          </Button>
-          <Button
-            className="text-white bg-yellow-500 hover:bg-yellow-400"
-            onClick={() => handleUpdate(patient)}
-          >
-            <IconEdit size={16} />
-          </Button>
-        </td>
-      </tr>
-    );
-  }) || [];
+      return (
+        <tr key={patient._id}>
+          <td className="py-2 px-4">{patient.name}</td>
+          <td className="py-2 px-4">{patient.age}</td>
+          <td className="py-2 px-4">
+            {patientDiseases.map((disease) => disease.name).join(", ")}
+          </td>
+          <td className="py-2 px-4">
+            {patientDoctors.map((doctor) => doctor.name).join(", ")}
+          </td>
+          <td className="py-2 px-4 w-24 whitespace-nowrap flex flex-col lg:flex-row gap-2">
+            <Button
+              className="text-white bg-red-600 hover:bg-red-500"
+              onClick={() => handleDelete(patient._id)}
+            >
+              <IconTrash size={16} />
+            </Button>
+            <Button
+              className="text-white bg-yellow-500 hover:bg-yellow-400"
+              onClick={() => handleUpdate(patient)}
+            >
+              <IconEdit size={16} />
+            </Button>
+          </td>
+        </tr>
+      );
+    }) || [];
 
   return (
     <section className="h-full w-full bg-gray-50 p-6 rounded-lg shadow-lg">
@@ -187,6 +196,14 @@ export const PatientList: React.FC = () => {
           </thead>
           <tbody>{rows}</tbody>
         </Table>
+
+        {isFetching ? (
+          <div className="flex justify-center my-4">
+            <Loader />
+          </div>
+        ) : rows.length === 0 ? (
+          <p className="text-center my-4">No data found</p>
+        ) : null}
 
         <div className="flex justify-between items-center mt-4">
           <div>

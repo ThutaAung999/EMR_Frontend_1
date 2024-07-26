@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect } from "react";
 import { useGetMedicines1 } from "../api/get-all-medicines";
 import { useDeleteMedicine } from "../api/delete-medicine";
 import { IMedicine } from "../model/IMedicine";
-import { Button, Table } from "@mantine/core";
+import { Button, Loader, Table } from "@mantine/core";
 import { IconEdit, IconTrash } from "@tabler/icons-react";
 import { ConfirmDialog } from "../../../components/reusable-components/ConfirmDialog";
 import CreateMedicine from "./CreateMedicine";
@@ -21,6 +21,7 @@ const MedicineList: React.FC = () => {
   const [sortBy, setSortBy] = useState<string | undefined>();
   const [sortOrder, setSortOrder] = useState<"asc" | "desc" | undefined>();
 
+  const [initialLoading, setInitialLoading] = useState(true);
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
   const query = {
     page,
@@ -30,18 +31,13 @@ const MedicineList: React.FC = () => {
     sortOrder,
   };
 
-
   const {
     data: medicines,
-    error,
-    isLoading,
+    error,    
     refetch,
+    isFetching
   } = useGetMedicines1(query);
 
-  /* if(medicines){
-    console.log('medicines :',medicines?.data)
-  }
- */
 
   const mutationDelete = useDeleteMedicine();
 
@@ -104,11 +100,17 @@ const MedicineList: React.FC = () => {
   );
 
   useEffect(() => {
-    refetch();
+    refetch().then(() => {
+      setInitialLoading(false);
+    });
   }, [page, limit, debouncedSearchQuery, sortBy, sortOrder, refetch]);
 
-  if (isLoading) return <div>Loading...</div>;
+  
   if (error) return <div>Error fetching medicines: {error.message}</div>;
+
+  if (initialLoading) {
+    return <p>Loading...</p>;
+  }
 
   const getSortIcon = (column: string) => {
     if (sortBy === column) {
@@ -125,8 +127,7 @@ const MedicineList: React.FC = () => {
 
   const rows =
     medicines?.data?.map((medicine) => {
-      const medicineDiseases = medicine?.diseases ?? [];
-      //console.log('medicineDiseases :',medicineDiseases);
+      const medicineDiseases = medicine?.diseases ?? [];     
       return (
         <tr key={medicine._id}>
           <td className="py-2 px-4">{medicine.name}</td>
@@ -201,6 +202,13 @@ const MedicineList: React.FC = () => {
           </thead>
           <tbody>{rows}</tbody>
         </Table>
+        {isFetching ? (
+          <div className="flex justify-center my-4">
+            <Loader />
+          </div>
+        ) : rows.length === 0 ? (
+          <p className="text-center my-4">No data found</p>
+        ) : null}
 
         <div className="flex justify-between items-center mt-4">
           <div>

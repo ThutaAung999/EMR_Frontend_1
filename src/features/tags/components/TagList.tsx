@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { IconEdit, IconTrash } from "@tabler/icons-react";
-import { Button, Table } from "@mantine/core";
+import { Button, Loader, Table } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { FiChevronDown, FiChevronRight, FiChevronUp } from "react-icons/fi";
 
@@ -38,7 +38,7 @@ const TagList: React.FC = () => {
   const {
     data: tags,
     error,
-    isLoading,
+    isFetching,
     refetch,
 } = useGetTags1(query);
 
@@ -49,6 +49,8 @@ const TagList: React.FC = () => {
   const [selectedTag, setSelectedTag] = useState<ITag | null>(null);
   const [updateModalOpen, setUpdateModalOpen] = useState(false);
   
+  const [initialLoading, setInitialLoading] = useState(true);
+
   const handleDelete = (id: string) => {
     setSelectedTagId(id);
     setConfirmOpen(true);
@@ -104,13 +106,17 @@ const TagList: React.FC = () => {
   );
 
   useEffect(() => {
-    refetch();
+    refetch().then(() => {
+      setInitialLoading(false);
+    });
   }, [page, limit, debouncedSearchQuery, sortBy, sortOrder, refetch]);
 
 
-  if (isLoading) return <div>Loading...</div>;
+  
   if (error) return <div>Error</div>;
-  if (!tags) return <div>No Tags</div>;
+  if (initialLoading) {
+    return <p>Loading...</p>;
+  }
 
   const getSortIcon = (column: string) => {
     if (sortBy === column) {
@@ -175,6 +181,13 @@ const TagList: React.FC = () => {
           <tbody>{rows}</tbody>
         </Table>
 
+        {isFetching ? (
+          <div className="flex justify-center my-4">
+            <Loader />
+          </div>
+        ) : rows.length === 0 ? (
+          <p className="text-center my-4">No data found</p>
+        ) : null}
 
         <div className="flex justify-between items-center mt-4">
           <div>

@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect } from "react";
 import { useGetDiseases1 } from "../api/get-all-diseases";
 import { useDeleteDisease } from "../api/delete-disease";
 import { IDisease } from "../model/IDisease";
-import { Button, Table } from "@mantine/core";
+import { Button, Loader, Table } from "@mantine/core";
 import { IconEdit, IconTrash } from "@tabler/icons-react";
 import { ConfirmDialog } from "../../../components/reusable-components/ConfirmDialog";
 import CreateDisease from "./CreateDisease";
@@ -20,6 +20,8 @@ const DiseaseList: React.FC = () => {
   const [sortBy, setSortBy] = useState<string | undefined>();
   const [sortOrder, setSortOrder] = useState<"asc" | "desc" | undefined>();
 
+  const [initialLoading, setInitialLoading] = useState(true);
+
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
   const query = {
     page,
@@ -29,7 +31,7 @@ const DiseaseList: React.FC = () => {
     sortOrder,
   };
 
-  const { data: diseases, error, isLoading, refetch } = useGetDiseases1(query);
+  const { data: diseases, error, refetch, isFetching } = useGetDiseases1(query);
   const mutationDelete = useDeleteDisease();
 
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -39,7 +41,7 @@ const DiseaseList: React.FC = () => {
   const [selectedDisease, setSelectedDisease] = useState<IDisease | null>(null);
   const [updateModalOpen, setUpdateModalOpen] = useState(false);
 
-  const [searchLoading, setSearchLoading] = useState(false);
+  //  const [searchLoading, setSearchLoading] = useState(false);
 
   const handleDelete = useCallback((id: string) => {
     setSelectedDiseaseId(id);
@@ -89,18 +91,21 @@ const DiseaseList: React.FC = () => {
     (e: React.ChangeEvent<HTMLInputElement>) => {
       setSearchQuery(e.target.value);
       setPage(1);
-      setSearchLoading(true);
     },
     []
   );
 
   useEffect(() => {
-    refetch().then(() => setSearchLoading(false));
+    refetch().then(() => {
+      setInitialLoading(false);
+    });
   }, [page, limit, debouncedSearchQuery, sortBy, sortOrder, refetch]);
 
-  if (isLoading && !searchLoading) return <div>Loading...</div>; // Show loading state only when page is 1
-
   if (error) return <div>Error fetching diseases: {error.message}</div>;
+
+  if (initialLoading) {
+    return <p>Loading...</p>;
+  }
 
   const getSortIcon = (column: string) => {
     if (sortBy === column) {
@@ -112,6 +117,31 @@ const DiseaseList: React.FC = () => {
     }
     return <FiChevronRight size={16} />;
   };
+
+  const rows =
+    diseases?.data?.map((disease) => {
+      return (
+        <tr key={disease._id}>
+          <td className="py-2 px-4">{disease.name}</td>
+          <td className="py-2 px-4">{disease.description}</td>
+
+          <td className="py-2 px-4 w-24 whitespace-nowrap flex flex-col lg:flex-row gap-2">
+            <Button
+              className="text-white bg-red-600 hover:bg-red-500"
+              onClick={() => handleDelete(disease._id)}
+            >
+              <IconTrash size={16} />
+            </Button>
+            <Button
+              className="text-white bg-yellow-500 hover:bg-yellow-400"
+              onClick={() => handleUpdate(disease)}
+            >
+              <IconEdit size={16} />
+            </Button>
+          </td>
+        </tr>
+      );
+    }) || [];
 
   return (
     <section className="h-full w-full bg-gray-50 p-6 rounded-lg shadow-lg">
@@ -150,30 +180,16 @@ const DiseaseList: React.FC = () => {
               <th className="py-2 px-4">Action</th>
             </tr>
           </thead>
-          <tbody>
-            {diseases?.data.map((disease) => (
-              <tr key={disease._id}>
-                <td className="py-2 px-4">{disease.name}</td>
-                <td className="py-2 px-4">{disease.description}</td>
-
-                <td className="py-2 px-4 w-24 whitespace-nowrap flex flex-col lg:flex-row gap-2">
-                  <Button
-                    className="text-white bg-red-600 hover:bg-red-500"
-                    onClick={() => handleDelete(disease._id)}
-                  >
-                    <IconTrash size={16} />
-                  </Button>
-                  <Button
-                    className="text-white bg-yellow-500 hover:bg-yellow-400"
-                    onClick={() => handleUpdate(disease)}
-                  >
-                    <IconEdit size={16} />
-                  </Button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
+          <tbody>{rows}</tbody>
         </Table>
+
+        {isFetching ? (
+          <div className="flex justify-center my-4">
+            <Loader />
+          </div>
+        ) : rows.length === 0 ? (
+          <p className="text-center my-4">No data found</p>
+        ) : null}
 
         <div className="flex justify-between items-center mt-4">
           <div>
