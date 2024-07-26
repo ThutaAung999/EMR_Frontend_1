@@ -104,7 +104,11 @@ const DiseaseList: React.FC = () => {
   if (error) return <div>Error fetching diseases: {error.message}</div>;
 
   if (initialLoading) {
-    return <p>Loading...</p>;
+    return (
+      <div className="flex justify-center my-4">
+        <Loader />
+      </div>
+    );
   }
 
   const getSortIcon = (column: string) => {

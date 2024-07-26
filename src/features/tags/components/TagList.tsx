@@ -8,7 +8,6 @@ import { useGetTags1 } from "../api/get-all-tags";
 import { useDeleteTag } from "../api/delete-tag";
 import useDebounce from "../../sharedHooks/debounce.hook";
 
-
 import { CreateTag } from "./CreateTag";
 import { UpdateTag } from "./UpdateTag";
 import SearchInput from "../../../components/reusable-components/SearchInput";
@@ -18,7 +17,6 @@ import { ConfirmDialog } from "../../../components/reusable-components/ConfirmDi
 import Pagination1 from "../../../components/reusable-components/Patination1";
 
 const TagList: React.FC = () => {
-
   const [page, setPage] = useState(1);
   const [limit] = useState(5);
   const [searchQuery, setSearchQuery] = useState("");
@@ -34,13 +32,7 @@ const TagList: React.FC = () => {
     sortOrder,
   };
 
-
-  const {
-    data: tags,
-    error,
-    isFetching,
-    refetch,
-} = useGetTags1(query);
+  const { data: tags, error, isFetching, refetch } = useGetTags1(query);
 
   const mutationDelete = useDeleteTag();
 
@@ -48,7 +40,7 @@ const TagList: React.FC = () => {
   const [selectedTagId, setSelectedTagId] = useState<string | null>(null);
   const [selectedTag, setSelectedTag] = useState<ITag | null>(null);
   const [updateModalOpen, setUpdateModalOpen] = useState(false);
-  
+
   const [initialLoading, setInitialLoading] = useState(true);
 
   const handleDelete = (id: string) => {
@@ -78,12 +70,10 @@ const TagList: React.FC = () => {
     setSelectedTagId(null);
   }, [selectedTagId, mutationDelete]);
 
-  
   const handleUpdate = useCallback((tag: ITag) => {
     setSelectedTag(tag);
     setUpdateModalOpen(true);
-  },[]);
-
+  }, []);
 
   const handleSort = useCallback(
     (column: string) => {
@@ -111,11 +101,14 @@ const TagList: React.FC = () => {
     });
   }, [page, limit, debouncedSearchQuery, sortBy, sortOrder, refetch]);
 
-
-  
   if (error) return <div>Error</div>;
+
   if (initialLoading) {
-    return <p>Loading...</p>;
+    return (
+      <div className="flex justify-center my-4">
+        <Loader />
+      </div>
+    );
   }
 
   const getSortIcon = (column: string) => {
@@ -128,9 +121,8 @@ const TagList: React.FC = () => {
     }
     return <FiChevronRight size={16} />;
   };
-  
-  const rows =
 
+  const rows =
     tags?.data?.map((tag) => {
       return (
         <tr key={tag._id}>
@@ -165,10 +157,15 @@ const TagList: React.FC = () => {
       </div>
 
       <div className="h-full w-full">
-        <Table striped highlightOnHover verticalSpacing="md" className="bg-white shadow-sm rounded-lg">
+        <Table
+          striped
+          highlightOnHover
+          verticalSpacing="md"
+          className="bg-white shadow-sm rounded-lg"
+        >
           <thead className="bg-gray-200">
             <tr>
-                <th
+              <th
                 className="py-2 px-4 cursor-pointer"
                 onClick={() => handleSort("name")}
               >

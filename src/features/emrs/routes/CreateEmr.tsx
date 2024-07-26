@@ -207,6 +207,7 @@ const CreateEmr: React.FC = () => {
         setSelectedTags={setSelectedTags}
         handleImageUpload={handleImageUpload}
         mutationPending={mutation.isPending}
+        setSelectedFiles={setSelectedFiles}                
       />
     </section>
   );

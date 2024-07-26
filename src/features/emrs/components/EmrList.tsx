@@ -120,7 +120,9 @@ export const EmrList: React.FC = () => {
   }
 
   if (initialLoading) {
-    return <p>Loading...</p>;
+    return <div className="flex justify-center my-4">
+            <Loader />
+          </div>
   }
 
   const transformToDTO = (emr: IEmr): IEmrDTO => {

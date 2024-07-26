@@ -1,3 +1,4 @@
+import { Loader } from "@mantine/core";
 import React from "react";
 
 interface LoadingErrorProps {
@@ -6,7 +7,14 @@ interface LoadingErrorProps {
 }
 
 const LoadingError: React.FC<LoadingErrorProps> = ({ loading, error }) => {
-  if (loading) return <div>Loading...</div>;
+  
+  if (loading) {
+    return (
+      <div className="flex justify-center my-4">
+        <Loader />
+      </div>
+    );
+  }
   if (error) return <div>Error</div>;
   return null;
 };

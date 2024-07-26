@@ -14,7 +14,6 @@ import { FiChevronDown, FiChevronRight, FiChevronUp } from "react-icons/fi";
 import SearchInput from "../../../components/reusable-components/SearchInput";
 
 const MedicineList: React.FC = () => {
-
   const [page, setPage] = useState(1);
   const [limit] = useState(5);
   const [searchQuery, setSearchQuery] = useState("");
@@ -33,18 +32,20 @@ const MedicineList: React.FC = () => {
 
   const {
     data: medicines,
-    error,    
+    error,
     refetch,
-    isFetching
+    isFetching,
   } = useGetMedicines1(query);
-
 
   const mutationDelete = useDeleteMedicine();
 
-
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const [selectedMedicineId, setSelectedMedicineId] = useState<string | null>(null);
-  const [selectedMedicine, setSelectedMedicine] = useState<IMedicine | null>(null);
+  const [selectedMedicineId, setSelectedMedicineId] = useState<string | null>(
+    null
+  );
+  const [selectedMedicine, setSelectedMedicine] = useState<IMedicine | null>(
+    null
+  );
   const [updateModalOpen, setUpdateModalOpen] = useState(false);
 
   const handleDelete = useCallback((id: string) => {
@@ -105,11 +106,14 @@ const MedicineList: React.FC = () => {
     });
   }, [page, limit, debouncedSearchQuery, sortBy, sortOrder, refetch]);
 
-  
   if (error) return <div>Error fetching medicines: {error.message}</div>;
 
   if (initialLoading) {
-    return <p>Loading...</p>;
+    return (
+      <div className="flex justify-center my-4">
+        <Loader />
+      </div>
+    );
   }
 
   const getSortIcon = (column: string) => {
@@ -127,7 +131,7 @@ const MedicineList: React.FC = () => {
 
   const rows =
     medicines?.data?.map((medicine) => {
-      const medicineDiseases = medicine?.diseases ?? [];     
+      const medicineDiseases = medicine?.diseases ?? [];
       return (
         <tr key={medicine._id}>
           <td className="py-2 px-4">{medicine.name}</td>

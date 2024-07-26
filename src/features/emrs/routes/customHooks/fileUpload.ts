@@ -40,3 +40,4 @@ export const useImageUpload = () => {
 
   return { uploadedImages, uploadImages, removeImage };
 };
+
