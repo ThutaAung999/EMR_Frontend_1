@@ -28,6 +28,7 @@ const icons: Record<NavItem, React.ElementType> = {
   Tags: AiOutlineTag,
 };
 
+
 const routes: Record<NavItem, string> = {
   Dashboard: "/",
   Patients: "/patients",
@@ -38,6 +39,7 @@ const routes: Record<NavItem, string> = {
 };
 
 const Sidebar: React.FC<{
+  
   activeNavIndex: number;
   setActiveNavIndex: (index: number) => void;
   navItems: NavItem[];

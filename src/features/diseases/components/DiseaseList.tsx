@@ -41,8 +41,7 @@ const DiseaseList: React.FC = () => {
   const [selectedDisease, setSelectedDisease] = useState<IDisease | null>(null);
   const [updateModalOpen, setUpdateModalOpen] = useState(false);
 
-  //  const [searchLoading, setSearchLoading] = useState(false);
-
+  
   const handleDelete = useCallback((id: string) => {
     setSelectedDiseaseId(id);
     setConfirmOpen(true);
