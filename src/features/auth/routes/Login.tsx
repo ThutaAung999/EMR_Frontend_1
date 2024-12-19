@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+/* import React, { useContext, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import instance from "../api/axios"; // Import the custom Axios instance
 import { useForm } from "@mantine/form";
@@ -17,6 +17,7 @@ import { AuthContext } from "../providers/AuthContext";
 import axios from "axios"; 
 
 const Login: React.FC = () => {
+
   const { setAuth } = useContext(AuthContext)!;
   const [notification, setNotification] = useState<{
     message: string;
@@ -149,6 +150,98 @@ const Login: React.FC = () => {
           <Link
             to="/signup"
             className={`text-blue-500 hover:underline ${loading ? "pointer-events-none opacity-50" : ""}`}
+          >
+            Sign Up
+          </Link>
+        </div>
+      </Paper>
+    </Container>
+  );
+};
+
+export default Login;
+ */
+
+import {
+  TextInput,
+  PasswordInput,
+  Button,
+  Paper,
+  Title,
+  Container,
+  Notification,
+  Loader,
+} from "@mantine/core";
+import { IconCheck, IconX } from "@tabler/icons-react";
+import { Link } from "react-router-dom";
+import { useLogin } from "../hooks/use-login"; 
+
+const Login = () => {
+  const {
+    form,
+    handleLogin,
+    notification,
+    setNotification,
+    loading,
+  } = useLogin();
+
+  return (
+    <Container
+      size={420}
+      className="min-h-screen flex flex-grow w-full items-center justify-center"
+    >
+      {notification && (
+        <Notification
+          icon={
+            notification.type === "success" ? (
+              <IconCheck size={18} />
+            ) : (
+              <IconX size={18} />
+            )
+          }
+          color={notification.type === "success" ? "teal" : "red"}
+          onClose={() => setNotification(null)}
+          className="absolute top-4"
+        >
+          {notification.message}
+        </Notification>
+      )}
+      <Paper withBorder shadow="md" p={30} radius="md" className="w-full">
+        <Title align="center" className="mb-6 text-2xl font-bold">
+          Log In
+        </Title>
+        <form onSubmit={form.onSubmit(handleLogin)}>
+          <TextInput
+            label="Email"
+            placeholder="your@email.com"
+            {...form.getInputProps("email")}
+            className="mb-4"
+            disabled={loading}
+          />
+          <PasswordInput
+            label="Password"
+            placeholder="Your password"
+            {...form.getInputProps("password")}
+            className="mb-6"
+            disabled={loading}
+          />
+          <Button
+            fullWidth
+            mt="xl"
+            type="submit"
+            className="bg-blue-500 hover:bg-blue-600"
+            disabled={loading}
+          >
+            {loading ? <Loader size="sm" color="white" /> : "Log In"}
+          </Button>
+        </form>
+        <div className="mt-6 text-center">
+          Don't have an account?{" "}
+          <Link
+            to="/signup"
+            className={`text-blue-500 hover:underline ${
+              loading ? "pointer-events-none opacity-50" : ""
+            }`}
           >
             Sign Up
           </Link>

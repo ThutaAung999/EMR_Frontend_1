@@ -8,8 +8,6 @@ import { GiVirus } from "react-icons/gi";
 import { notifications } from "@mantine/notifications";
 import { FaCheck, FaExclamationCircle,} from "react-icons/fa"; 
 
-
-
 const CreateDisease: React.FC = () => {
   const {
     control,
