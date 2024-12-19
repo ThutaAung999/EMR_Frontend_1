@@ -3,20 +3,25 @@ import { IDisease } from "../model/IDisease";
 import {BaseTypeForPagination} from '../../utilForFeatures/basePropForPagination';
 
 
-//--------------------------------------------------------------------------------------------------------------------------------
-//--------------------------------------------------------------------------------------------------------------------------------
-//After updating
-
-
-const fetchDiseases1 = async (query: BaseTypeForPagination): Promise<{ data: IDisease[]; total: number; page: number; totalPages: number }> => {  
+const fetchDiseases1 = async (query: BaseTypeForPagination):
+ Promise<{ data: IDisease[]; total: number; page: number; totalPages: number }> => {  
   
-  const params = new URLSearchParams(query as any).toString();
+  // Convert BaseTypeForPagination to a Record<string, string>
+  const queryParams: Record<string, string> = {
+    page: String(query.page),
+    limit: String(query.limit),
+    ...(query.search && { search: query.search }),
+    ...(query.sortBy && { sortBy: query.sortBy }),
+    ...(query.sortOrder && { sortOrder: query.sortOrder }),
+    ...(query.noLimit !== undefined && { noLimit: String(query.noLimit) }),
+  };
+  const params = new URLSearchParams(queryParams).toString();
   
   
-  const apiUrl = import.meta.env.VITE_API_URL;  
-  const response = await fetch(apiUrl+`api/diseases?${params}`);
+ // const apiUrl = import.meta.env.VITE_API_URL;  
+ // const response = await fetch(apiUrl+`api/diseases?${params}`);
 
-  //const response = await fetch(`http://localhost:9999/api/diseases?${params}`);
+  const response = await fetch(`http://localhost:9999/api/diseases?${params}`);
   
   if (!response.ok) {
     if (response.status === 429) {
@@ -42,7 +47,3 @@ export const useGetDiseases1 = (query: BaseTypeForPagination) => {
       refetchOnWindowFocus: false,
   } as CustomQueryOptions<{ data: IDisease[]; total: number; page: number; totalPages: number }, Error>);
 };
-
-
-//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
