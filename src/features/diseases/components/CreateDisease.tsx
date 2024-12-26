@@ -79,7 +79,7 @@ const CreateDisease: React.FC = () => {
               )}
             />
 
-            <Controller
+            `<Controller
               name="description"
               control={control}
               rules={{ required: "Description is required" }}

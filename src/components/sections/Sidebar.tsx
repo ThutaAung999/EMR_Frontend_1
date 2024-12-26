@@ -8,7 +8,7 @@ import { NavLink, useLocation } from "react-router-dom";
 import { NavItem } from "../../constants/nav-items";
 import { useNavigate } from "react-router-dom";
 
-import { AuthContext } from "../../features/auth/providers/AuthContext"; 
+import { AuthContext } from "../../features/auth/providers/AuthContext";
 
 const variants = {
   expanded: { width: "15%" },
@@ -28,7 +28,6 @@ const icons: Record<NavItem, React.ElementType> = {
   Tags: AiOutlineTag,
 };
 
-
 const routes: Record<NavItem, string> = {
   Dashboard: "/",
   Patients: "/patients",
@@ -39,7 +38,6 @@ const routes: Record<NavItem, string> = {
 };
 
 const Sidebar: React.FC<{
-  
   activeNavIndex: number;
   setActiveNavIndex: (index: number) => void;
   navItems: NavItem[];
@@ -76,16 +74,18 @@ const Sidebar: React.FC<{
     console.log("Active Index:", activeIndex);
   }, [location, navItems, setActiveNavIndex]);
 
-
-
   const handleLogout = () => {
-    localStorage.removeItem("token"); 
-    //localStorage.removeItem("userImage");
-    authContext?.setAuth({ token: null, isAuthenticated: false, userImage: null });
-    navigate("/login"); 
+    localStorage.removeItem("token");
+    localStorage.removeItem("userImage");
+    authContext?.setAuth({
+      token: null,
+      isAuthenticated: false,
+      userImage: null,
+      name: null,
+      role: null,
+    });
+    navigate("/login");
   };
-  
-
 
   return (
     <motion.section
@@ -93,12 +93,12 @@ const Sidebar: React.FC<{
       variants={variants}
       className={`flex flex-col justify-between items-center gap-10 bg-green-300 ${
         isExpanded ? "py-8 px-6" : "px-8 py-6"
-      } h-screen relative`} 
+      } h-screen relative`}
     >
-      <div 
+      <div
         id="expanded-icon"
-        // re Position FaArrowRight at the top right 
-        className="bg-green-500 text-white p-2 rounded-full cursor-pointer absolute top-4 right-4" 
+        // re Position FaArrowRight at the top right
+        className="bg-green-500 text-white p-2 rounded-full cursor-pointer absolute top-4 right-4"
         onClick={() => setIsExpanded(!isExpanded)}
       >
         <FaArrowRight />
@@ -145,9 +145,7 @@ const Sidebar: React.FC<{
                 </div>
 
                 {isExpanded && (
-                  <span
-                    className={`text-lg ${isExpanded ? "flex" : "hidden"}`}
-                  >
+                  <span className={`text-lg ${isExpanded ? "flex" : "hidden"}`}>
                     {item}
                   </span>
                 )}
@@ -157,17 +155,18 @@ const Sidebar: React.FC<{
         </div>
       </div>
 
-          
       <div
-          id="logout-box"
-          className="w-full flex flex-col justify-start items-center gap-4 cursor-pointer"
-          onClick={handleLogout}
+        id="logout-box"
+        className="w-full flex flex-col justify-start items-center gap-4 cursor-pointer"
+        onClick={handleLogout}
       >
         <div className="bg-green-700 w-full h-[0.5px]"></div>
         <div className="flex justify-center items-center gap-2">
           <MdLogout className="text-green-900 h-6 w-6" />
           <span
-            className={`text-green-900 text-lg ${isExpanded ? "flex" : "hidden"}`}
+            className={`text-green-900 text-lg ${
+              isExpanded ? "flex" : "hidden"
+            }`}
           >
             Logout
           </span>
