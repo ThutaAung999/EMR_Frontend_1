@@ -18,10 +18,10 @@ const fetchDiseases1 = async (query: BaseTypeForPagination):
   const params = new URLSearchParams(queryParams).toString();
   
   
- // const apiUrl = import.meta.env.VITE_API_URL;  
- // const response = await fetch(apiUrl+`api/diseases?${params}`);
+  const apiUrl = import.meta.env.VITE_API_URL;  
+  const response = await fetch(apiUrl+`api/diseases?${params}`);
 
-  const response = await fetch(`http://localhost:9999/api/diseases?${params}`);
+  //const response = await fetch(`http://localhost:9999/api/diseases?${params}`);
   
   if (!response.ok) {
     if (response.status === 429) {

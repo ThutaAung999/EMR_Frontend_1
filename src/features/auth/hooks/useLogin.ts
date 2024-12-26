@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import instance from "../api/axios"; 
+import instance from "../api/axios";
 import { useForm } from "@mantine/form";
 import { useContext } from "react";
 import { AuthContext } from "../providers/AuthContext";
-
+  
 interface LoginValues {
   email: string;
   password: string;
@@ -40,12 +40,13 @@ export const useLogin = () => {
     setLoading(true);
     try {
       const response = await instance.post("/api/users/login", values);
-
-      console.log("Login successful:", response.data);
+      const { token, data } = response.data;
       setAuth({
-        token: response.data.token,
+        token: token,
         isAuthenticated: true,
-        userImage: response.data.userImage,
+        userImage: data?.user.userImage,
+        name: data?.user?.name,
+        role: data?.user?.role,
       });
       setNotification({ message: "Login successful!", type: "success" });
       navigate("/"); // Redirect to the home page upon successful login

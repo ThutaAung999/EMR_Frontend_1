@@ -9,7 +9,7 @@ import {
   Notification,
 } from "@mantine/core";
 import { Link } from "react-router-dom";
-import { useSignup } from "../hooks/use-signup";
+import { useSignup } from "../hooks/useSignup";
 import { IconCheck, IconX } from "@tabler/icons-react";
 
 export const Signup = () => {

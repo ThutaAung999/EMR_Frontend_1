@@ -2,8 +2,11 @@ import React from "react";
 import { FaUserMd, FaPills, FaFileMedical, FaDisease, FaUser } from "react-icons/fa";
 import { MdMedicalServices } from "react-icons/md";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 const Dashboard: React.FC = () => {
+
+  const navigate = useNavigate();
   const cardVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: (i: number) => ({
@@ -13,6 +16,9 @@ const Dashboard: React.FC = () => {
         delay: i * 0.2,
       },
     }),
+  };
+  const handleCardClick = (path: string) => {
+    navigate(path);
   };
 
   return (
@@ -32,6 +38,7 @@ const Dashboard: React.FC = () => {
                   <p className="text-gray-600">Age: 45</p>
                 </>
               ),
+              path: "/patients",
             },
             {
               title: "Doctor Information",
@@ -52,6 +59,7 @@ const Dashboard: React.FC = () => {
                   <p className="text-gray-600">Dosage: 75mg</p>
                 </>
               ),
+              path: "/medicines",
             },
             {
               title: "Medical Reports",
@@ -72,6 +80,7 @@ const Dashboard: React.FC = () => {
                   <p className="text-gray-600">Diagnosed: 2020</p>
                 </>
               ),
+              path: "/diseases",
             },
             {
               title: "Medical Services",
@@ -86,11 +95,12 @@ const Dashboard: React.FC = () => {
           ].map((item, index) => (
             <motion.div
               key={index}
-              className="bg-white p-6 rounded-lg shadow-md min-h-[200px]"
+              className="bg-white p-6 rounded-lg shadow-md min-h-[200px] cursor-pointer"
               custom={index}
               initial="hidden"
               animate="visible"
               variants={cardVariants}
+              onClick={() => item.path && handleCardClick(item.path)}
             >
               <h2 className="text-2xl font-semibold mb-4">{item.title}</h2>
               <div className="flex items-center space-x-4">
