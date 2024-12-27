@@ -48,12 +48,14 @@ export const useSignup = () => {
     setLoading(true);
     try {
       const response = await instance.post("/api/users/signup", values);
-
+      const {token,data} = response.data;
       console.log("Registration successful:", response.data);
       setAuth({
-        token: response.data.token,
+        token: token,
         isAuthenticated: true,
-        userImage: response.data.userImage,
+        userImage: data?.user.userImage,
+        name: data?.user?.name,
+        role: data?.user?.role,
       });
 
       setNotification({ message: "Signup  successful!", type: "success" });
