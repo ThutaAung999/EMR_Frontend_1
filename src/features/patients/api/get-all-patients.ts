@@ -30,8 +30,8 @@ export const fetchPatients1 = async (query:BaseTypeForPagination):
   //const response = await fetch(`http://localhost:9999/api/patients?${params}`);
   //const response = await fetch('https://emr-backend-intz.onrender.com/api/patients');
 
-  const apiUrl = import.meta.env.VITE_API_URL;
-  const response = await fetch(apiUrl+`api/patients?${params}`);
+   const apiUrl = import.meta.env.VITE_API_URL;
+   const response = await fetch(apiUrl+`api/patients?${params}`);
 
   if (!response.ok) {
     if (response.status === 429) {
